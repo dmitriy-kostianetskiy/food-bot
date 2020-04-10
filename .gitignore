@@ -102,3 +102,11 @@ dist
 
 # TernJS port file
 .tern-port
+
+node_modules/
+**/local.js
+tsc-out
+gcf-package.zip
+PROD.yaml
+.env
+service-key.json

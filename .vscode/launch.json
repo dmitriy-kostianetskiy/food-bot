@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Parse files",
+      "type": "node",
+      "request": "launch",
+      "args": [
+        "${workspaceRoot}/data/parse.ts"
+      ],
+      "runtimeArgs": [
+        "-r",
+        "ts-node/register"
+      ],
+      "cwd": "${workspaceRoot}",
+      "protocol": "inspector",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "TS_NODE_IGNORE": "false"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch bot",
+      "envFile": "${workspaceFolder}/.env",
+      "runtimeArgs": [
+          "-r",
+          "ts-node/register"
+      ],
+      "args": [
+          "${workspaceFolder}\\main.ts"
+      ]
+    }
+  ]
+}

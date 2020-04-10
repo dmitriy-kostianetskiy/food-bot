@@ -1,0 +1,33 @@
+{
+  "name": "food-bot",
+  "version": "0.0.1",
+  "repository": "https://github.com/redrick-tmn/food-bot.git",
+  "author": "redrick-tmn <redrick.tmn@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=10.*"
+  },
+  "main": "./tsc-out/main.js",
+  "scripts": {
+    "parse-data": "ts-node ./data/parse.ts",
+    "merge-data": "ts-node ./data/merge.ts",
+    "start": "ts-node main.ts",
+    "build": "tsc --project tsconfig.json",
+    "lint": "tslint --project tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.149",
+    "@types/node": "^13.11.0",
+    "ts-node": "^8.8.1",
+    "tslint": "^6.1.1",
+    "tslint-consistent-codestyle": "^1.16.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "firebase-admin": "^8.10.0",
+    "https-proxy-agent": "^5.0.0",
+    "lodash": "^4.17.15",
+    "telegraf": "^3.37.0",
+    "telegraf-session-firebase": "^0.1.0"
+  }
+}
