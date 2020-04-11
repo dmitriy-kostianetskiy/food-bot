@@ -3,39 +3,47 @@ import { bootstrap } from './bootstrap';
 import { Agent } from 'https';
 import createHttpsProxyAgent = require('https-proxy-agent');
 import Telegraf, { ContextMessageUpdate } from 'telegraf';
-import {
+
+import * as admin from 'firebase-admin';
+import * as firebaseSession from 'telegraf-session-firebase';
+
+import * as serviceAccount from './service-key.json';
+
+export const {
   BOT_TOKEN,
+  NODE_ENV,
   FUNCTION_TARGET,
-  NODE_ENV
-} from './environment';
+  FIREBASE_URL,
+  FUNCTION_URL,
+  PROXY
+} = process.env;
 
 export function createBot(): Telegraf<ContextMessageUpdate> {
-  if (NODE_ENV === 'production') {
-    return createProdBot();
-  } else {
-    return createLocalBot();
-  }
-}
-
-function createLocalBot(): Telegraf<ContextMessageUpdate> {
-  const bot = new Telegraf(BOT_TOKEN, {
+  const options = {
     telegram: {
-      agent: <Agent><unknown>createHttpsProxyAgent('http://127.0.0.1:9080')
+      agent: PROXY ? <Agent><unknown>createHttpsProxyAgent(PROXY) : null
     }
+  };
+
+  const bot = new Telegraf(BOT_TOKEN, options);
+
+  admin.initializeApp({
+    credential: admin.credential.cert(<admin.ServiceAccount><unknown>serviceAccount),
+    databaseURL: FIREBASE_URL
   });
 
+  const database = admin.database();
+
+  bot.use(firebaseSession(database.ref('sessions')));
+
   bootstrap(bot);
 
-  bot.launch();
+  if (NODE_ENV === 'production') {
+    bot.telegram.setWebhook(`${FUNCTION_URL}/${FUNCTION_TARGET}`);
 
-  return bot;
-}
-
-function createProdBot(): Telegraf<ContextMessageUpdate> {
-  const bot = new Telegraf(BOT_TOKEN);
-  bootstrap(bot);
-
-  bot.telegram.setWebhook(`https://europe-west1-fleet-respect-241714.cloudfunctions.net/${FUNCTION_TARGET}`);
+  } else {
+    bot.launch();
+  }
 
   return bot;
 }
