@@ -8,6 +8,7 @@ export interface Ingredient {
   readonly name: string;
   readonly amount?: number;
   readonly unit?: string;
+  readonly indexes?: number[];
 }
 
 export interface Meal {
