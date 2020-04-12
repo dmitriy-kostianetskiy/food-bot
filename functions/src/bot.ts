@@ -1,24 +1,24 @@
 import Telegraf, { ContextMessageUpdate } from 'telegraf';
-import { db } from './db';
-import { Subscriber, Menu } from './model'
+import { SubscriptionService } from './services';
 
-export function createBot(token: string): Telegraf<ContextMessageUpdate> {
-  const bot = new Telegraf(token);
-
+export function configureBot(
+  bot: Telegraf<ContextMessageUpdate>,
+  subscriptionService: SubscriptionService
+): Telegraf<ContextMessageUpdate> {
   bot.start(async (context) => {
     const chatId = context.chat.id.toFixed(0);
-    const subscriber: Subscriber  = {
-      id: chatId
-    };
 
-    await db.collection('/subscribers').doc(chatId).set(subscriber);
+    await subscriptionService.addSubscription({
+      id: chatId
+    });
 
     await context.reply('Спасибо! Мы скоро перешлем вам меню.');
   });
   
   bot.command('stop', async (context) => {
     const chatId = context.chat.id.toFixed(0);
-    await db.collection('/subscribers').doc(chatId).delete();
+    
+    await subscriptionService.deleteSubscription(chatId);
 
     await context.reply('Нам очень жаль, что вы нас покидаете :(');
   });
