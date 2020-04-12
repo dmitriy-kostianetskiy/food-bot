@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Ingredient, Meal, Recipe } from '../model';
+import { Ingredient, Meal, Recipe } from './model';
 
 export function printMeal(meal: Meal): string {
   let result = '';
@@ -55,6 +55,7 @@ function printNumber(value: number): string {
       case '7': return '7️⃣';
       case '8': return '8️⃣';
       case '9': return '9️⃣';
+      default: return item;
     }
   }).join('');
 }
