@@ -79,14 +79,14 @@ export const sendMessage = region
           .reduce((acc, item) => acc + item, 0);
   
         const unit = _(value).map(item => item.ingredient.unit).head();
-        const indexes = _.map(value, item => item.index);
+        const indexes = _(value).map(item => item.index + 1).uniq().sort().join(', ');
   
         return { amount, unit, indexes };
       })
       .map((value, index) => ({
         unit: value.unit,
         amount: value.amount,
-        name: `${index} (${value.indexes.join(',')})`
+        name: `${index} (${value.indexes})`
       }))
       .orderBy(value => value.name)
       .value();
@@ -100,7 +100,6 @@ export const sendMessage = region
       await bot.telegram.sendMessage(subscription.id, item, { parse_mode: 'HTML' });
     }
   });
-
 
 export const botHook = region
   .https
