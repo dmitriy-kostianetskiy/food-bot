@@ -29,6 +29,5 @@ export function configureBot(
 
   bot.on('text', context => context.reply('Используйте команды /start и /stop, чтобы подписаться и отписаться от рассылки.'));
 
-
   return bot;
 }
