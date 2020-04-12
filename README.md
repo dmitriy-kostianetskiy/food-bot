@@ -1,10 +1,13 @@
-# Generate menu bot
+## Generate menu telegram bot
 
-http://t.me/GenerateMenuBot
+### Project Setup
 
-This is very simple [Telegram bot](https://telegram.org/blog/bot-revolution) which could generate a food menu.
-
-Following commands can be useful:
-- `/generate` - generate a new menu for ordinary working week (5 days) but be careful previous menu will be lost
-- `/ingredients` - list all ingredients you need to cooking
-- `/menu` - display current menu
+1. `npm install -g firebase-tools`
+2. Create a Firebase Project using the Firebase Developer Console
+3. Configure this project to use the Firebase project you have created: `firebase use --add` and select your project in the list.
+4. Install the dependencies and deploy
+   ```
+   cd functions
+   yarn install
+   yarn deploy
+   ```

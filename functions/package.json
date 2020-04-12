@@ -1,0 +1,32 @@
+{
+  "name": "menu-function",
+  "description": "Menu generator cloud functions for firebase",
+  "dependencies": {
+    "@google-cloud/pubsub": "^1.7.2",
+    "firebase-admin": "~8.10.0",
+    "firebase-functions": "^3.6.0",
+    "lodash": "^4.17.15",
+    "telegraf": "^3.37.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.6",
+    "@types/lodash": "^4.14.149",
+    "tslint": "^6.1.1",
+    "typescript": "^3.8.3"
+  },
+  "scripts": {
+    "lint": "tslint --project tsconfig.json",
+    "build": "tsc",
+    "serve": "yarn build && firebase emulators:start --only functions",
+    "shell": "yarn build && firebase functions:shell",
+    "start": "yarn shell",
+    "deploy": "yarn build && firebase deploy --only functions",
+    "config": "firebase functions:config:set bot.key=\"BOT_TOKEN\"",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "10"
+  },
+  "main": "lib/index.js",
+  "private": true
+}
