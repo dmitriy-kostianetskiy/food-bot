@@ -12,7 +12,7 @@ export function configureBot(
       id: chatId
     });
 
-    await context.reply('Спасибо! Мы скоро перешлем вам меню.');
+    await context.reply('Спасибо! Мы скоро перешлем Вам меню 🍽');
   });
   
   bot.command('stop', async (context) => {
@@ -20,7 +20,7 @@ export function configureBot(
     
     await subscriptionService.deleteSubscription(chatId);
 
-    await context.reply('Нам очень жаль, что вы нас покидаете :(');
+    await context.reply('Нам очень жаль, что Вы нас покидаете 😿');
   });
 
   bot.on('text', context => context.reply('Используйте команды /start и /stop, чтобы подписаться и отписаться от рассылки.'));

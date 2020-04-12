@@ -19,7 +19,7 @@ const region = functions.region(DEFAULT_REGION);
 
 export const generateMenu = region
   .pubsub
-  .schedule('every sunday 17:00')
+  .schedule('every friday 12:00')
   .timeZone('Europe/Moscow')
   .onRun(async () => {
     const meals = _(_.range(MEALS.length))
@@ -64,27 +64,29 @@ export const sendMessage = region
   .topic(messageService.MESSAGES_TOPIC_NAME)
   .onPublish(async (message) => {
     const jsonMessage = message.json as Message;
-    console.log(jsonMessage);
-    const { menu, subscription: subscriber } = jsonMessage;
+    const { menu, subscription } = jsonMessage;
 
     const ingredients = _(menu.meals)
-      .flatMap(meal => meal.recipes)
-      .flatMap(recipe => recipe.ingredients)
-      .groupBy(item => item.name)
+      .flatMap((meal, index) => _.flatMap(meal.recipes, recipe => recipe.ingredients).map(ingredient => ({
+        index,
+        ingredient
+      })))
+      .groupBy(item => item.ingredient.name)
       .mapValues(value => {
         const amount = _(value)
-          .map(item => item.amount)
+          .map(item => item.ingredient.amount)
           .filter()
           .reduce((acc, item) => acc + item, 0);
   
-        const unit = _(value).map(item => item.unit).first();
+        const unit = _(value).map(item => item.ingredient.unit).head();
+        const indexes = _.map(value, item => item.index);
   
-        return { amount, unit };
+        return { amount, unit, indexes };
       })
       .map((value, index) => ({
         unit: value.unit,
         amount: value.amount,
-        name: index
+        name: `${index} (${value.indexes.join(',')})`
       }))
       .orderBy(value => value.name)
       .value();
@@ -95,7 +97,7 @@ export const sendMessage = region
     ];
 
     for (const item of messages) {
-      await bot.telegram.sendMessage(subscriber.id, item, { parse_mode: 'HTML' });
+      await bot.telegram.sendMessage(subscription.id, item, { parse_mode: 'HTML' });
     }
   });
 
