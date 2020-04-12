@@ -23,7 +23,12 @@ export function configureBot(
     await context.reply('Нам очень жаль, что Вы нас покидаете 😿');
   });
 
+  bot.catch((error, context) => {
+    console.log(`Ooops, encountered an error for ${context.updateType}`, error);
+  });
+
   bot.on('text', context => context.reply('Используйте команды /start и /stop, чтобы подписаться и отписаться от рассылки.'));
+
 
   return bot;
 }
