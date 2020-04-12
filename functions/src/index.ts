@@ -102,6 +102,4 @@ export const sendMessage = region
 
 export const botHook = region
   .https
-  .onRequest(async (request, response) => {
-    await bot.handleUpdate(request.body, response);
-  });
+  .onRequest((request, response) => bot.handleUpdate(request.body, response));
