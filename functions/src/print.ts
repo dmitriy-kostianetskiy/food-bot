@@ -15,7 +15,11 @@ export function printIngredients(ingredients: Ingredient[]): string {
       ? `- ${value.name} - ${value.amount} ${value.unit}`
       : `- ${value.name}`;
 
-    return `${acc}${line}\n`;
+    const postfix = value.indexes && value.indexes.length !== 0
+      ? ` (${_(value.indexes).uniq().sort().join(', ')})`
+      : '';
+
+    return `${acc}${line}${postfix}\n`;
   }, '');
 
   return `

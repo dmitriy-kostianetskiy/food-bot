@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as _ from 'lodash';
 import { MEALS } from './data';
-import { Subscription, Message } from './model';
+import { Subscription, Message, Ingredient } from './model';
 import { printMeal, printIngredients } from './print'
 import { DEFAULT_REGION } from './constants';
 import { SubscriptionService, MenuService, MessagesService, pubSub, firestore } from './services';
@@ -79,14 +79,13 @@ export const sendMessage = region
           .reduce((acc, item) => acc + item, 0);
   
         const unit = _(value).map(item => item.ingredient.unit).head();
-        const indexes = _(value).map(item => item.index + 1).uniq().sort().join(', ');
+        const indexes = _(value).map(item => item.index + 1).value();
   
         return { amount, unit, indexes };
       })
       .map((value, index) => ({
-        unit: value.unit,
-        amount: value.amount,
-        name: `${index} (${value.indexes})`
+        ...value,
+        name: index
       }))
       .orderBy(value => value.name)
       .value();
