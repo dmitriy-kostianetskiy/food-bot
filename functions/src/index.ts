@@ -1,8 +1,8 @@
 import * as functions from 'firebase-functions';
 import * as _ from 'lodash';
 import { MEALS } from './data';
-import { Subscription, Message, Ingredient } from './model';
-import { printMeal, printIngredients } from './print'
+import { Subscription, Message } from './model';
+import { printShoppingList, printMenu } from './print'
 import { DEFAULT_REGION } from './constants';
 import { SubscriptionService, MenuService, MessagesService, pubSub, firestore } from './services';
 import Telegraf from 'telegraf';
@@ -66,33 +66,9 @@ export const sendMessage = region
     const jsonMessage = message.json as Message;
     const { menu, subscription } = jsonMessage;
 
-    const ingredients = _(menu.meals)
-      .flatMap((meal, index) => _.flatMap(meal.recipes, recipe => recipe.ingredients).map(ingredient => ({
-        index,
-        ingredient
-      })))
-      .groupBy(item => item.ingredient.name)
-      .mapValues(value => {
-        const amount = _(value)
-          .map(item => item.ingredient.amount)
-          .filter()
-          .reduce((acc, item) => acc + item, 0);
-  
-        const unit = _(value).map(item => item.ingredient.unit).head();
-        const indexes = _(value).map(item => item.index + 1).value();
-  
-        return { amount, unit, indexes };
-      })
-      .map((value, index) => ({
-        ...value,
-        name: index
-      }))
-      .orderBy(value => value.name)
-      .value();
-
     const messages = [
-      ...menu.meals.map(meal => printMeal(meal)),
-      printIngredients(ingredients)
+      ...printMenu(menu),
+      printShoppingList(menu)
     ];
 
     for (const item of messages) {

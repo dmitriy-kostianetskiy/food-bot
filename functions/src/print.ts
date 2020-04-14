@@ -1,48 +1,74 @@
 import * as _ from 'lodash';
-import { Ingredient, Meal, Recipe } from './model';
+import { Ingredient, Meal, Recipe, Menu } from './model';
 
-export function printMeal(meal: Meal): string {
+export function printMenu({ meals }: Menu): string[] {
+  return meals.map((meal, index) => printMeal(meal, index));
+}
+
+export function printShoppingList({ meals }: Menu): string {
+  const ingredients = _(meals)
+    .flatMap((meal, index) => _.flatMap(meal.recipes, recipe => recipe.ingredients).map(ingredient => ({
+      index,
+      ingredient
+    })))
+    .groupBy(item => item.ingredient.name)
+    .map((group, groupKey)  => {
+      const amount = _(group)
+        .map(item => item.ingredient)
+        .groupBy(item => item.unit)
+        .mapValues(item => item.reduce((acc, x) => acc + x.amount, 0))
+        .map((aggregated, unit) => {
+          if (_.isFinite(aggregated)) {
+            return unit ? `${aggregated} ${unit}` : `${aggregated}`;
+          }
+
+          return null;
+        })
+        .filter(item => !!item)
+        .join(' + ');
+      
+      const indexes = _(group)
+        .map(item => item.index + 1)
+        .uniq()
+        .join(', ');
+
+      const amountLine = amount ? ` - ${amount} ` : ' ';
+
+      return ` - ${groupKey}${amountLine}(${indexes})`;
+    })
+    .orderBy()
+    .join('\n');
+
+  return `🛒 <b>Список покупок:</b>
+${ingredients}`
+}
+
+function printMeal(meal: Meal, index: number): string {
   let result = '';
 
   result += meal.recipes.map(recipe => printRecipe(recipe)).join('\n');
 
-  return `${result}\n⏳ Время приготовления: ${meal.readyInTime}`;
-}
-
-export function printIngredients(ingredients: Ingredient[]): string {
-  const result = ingredients.reduce((acc, value) => {
-    const line = value.amount && value.unit
-      ? `- ${value.name} - ${value.amount} ${value.unit}`
-      : `- ${value.name}`;
-
-    const postfix = value.indexes && value.indexes.length !== 0
-      ? ` (${_(value.indexes).uniq().sort().join(', ')})`
-      : '';
-
-    return `${acc}${line}${postfix}\n`;
-  }, '');
-
-  return `
-🛒 <b>Ингредиенты:</b>
-
+  return `<b>🍜 Ужин № ${index + 1}</b>
+<i>⏳ Время приготовления: ${meal.readyInTime}</i>
 ${result}`;
 }
 
 function printRecipe(recipe: Recipe): string {
-  const ingredients = printIngredients(recipe.ingredients);
+  const ingredients = recipe.ingredients
+    .map(item => printIngredient(item))
+    .join('\n');
 
-  const steps = recipe.steps.reduce((acc, value, index) => {
-    const line = `${printNumber(index + 1)} ${value}\n`;
-    return acc + line;
-  }, '');
+  const steps = recipe.steps
+    .map((item, index) => printStep(item, index))
+    .join('\n');
 
   return `
-<b>${recipe.title}</b>
+🍗 <b>${recipe.title}</b>
 
+🛒 <b>Ингредиенты:</b>
 ${ingredients}
 
 🍽 <b>Рецепт:</b>
-
 ${steps}`;
 }
 
@@ -62,4 +88,16 @@ function printNumber(value: number): string {
       default: return item;
     }
   }).join('');
+}
+
+function printStep(value: string, index: number): string {
+  return `${printNumber(index + 1)} ${value}`;
+}
+
+function printIngredient(value: Ingredient): string {
+  const line = value.amount && value.unit
+      ? `- ${value.name} - ${value.amount} ${value.unit}`
+      : `- ${value.name}`;
+
+    return `${line}`
 }
