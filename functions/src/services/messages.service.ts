@@ -1,4 +1,4 @@
-import { Menu, Subscription, Message } from '../model';
+import { MenuModel, Subscription, Message } from '../model';
 import { PubSub } from '@google-cloud/pubsub';
 
 export class MessagesService {

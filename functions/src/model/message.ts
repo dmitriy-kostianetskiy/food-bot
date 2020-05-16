@@ -1,7 +1,7 @@
 import { Subscription } from './subscription';
-import { Menu } from './recipe';
+import { MenuModel } from './recipe';
 
 export interface Message {
   readonly subscription: Subscription;
-  readonly menu: Menu;
+  readonly menu: MenuModel;
 }

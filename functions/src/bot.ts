@@ -1,10 +1,11 @@
-import Telegraf, { ContextMessageUpdate } from 'telegraf';
+import Telegraf from 'telegraf';
 import { SubscriptionService } from './services';
+import { TelegrafContext } from 'telegraf/typings/context';
 
 export function configureBot(
-  bot: Telegraf<ContextMessageUpdate>,
+  bot: Telegraf<TelegrafContext>,
   subscriptionService: SubscriptionService
-): Telegraf<ContextMessageUpdate> {
+): Telegraf<TelegrafContext> {
   bot.start(async (context) => {
     const chatId = context.chat.id.toFixed(0);
 
