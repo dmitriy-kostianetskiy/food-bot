@@ -18,3 +18,19 @@ export interface Meal {
 export interface Menu {
   readonly meals: Meal[];
 }
+
+export interface Category {
+  readonly name: string;
+  readonly titles: string[];
+}
+
+export interface CartIngredient {
+  name: string;
+  byMeals: {
+    index: number;
+    amount: number;
+    unit: string;
+  }[];
+}
+
+export type Cart = _.Dictionary<CartIngredient[]>;

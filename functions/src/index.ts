@@ -2,11 +2,12 @@ import * as functions from 'firebase-functions';
 import * as _ from 'lodash';
 import { MEALS } from './data';
 import { Subscription, Message } from './model';
-import { printShoppingList, printMenu } from './print'
+import { printCart, printMenu } from './print'
 import { DEFAULT_REGION } from './constants';
 import { SubscriptionService, MenuService, MessagesService, pubSub, firestore } from './services';
 import Telegraf from 'telegraf';
 import { configureBot } from './bot';
+import { buildCart } from './cart';
 
 const subscriptionService = new SubscriptionService(firestore);
 const menuService = new MenuService(firestore);
@@ -66,9 +67,11 @@ export const sendMessage = region
     const jsonMessage = message.json as Message;
     const { menu, subscription } = jsonMessage;
 
+    const cart = buildCart(menu.meals);
+
     const messages = [
       ...printMenu(menu),
-      printShoppingList(menu)
+      printCart(cart)
     ];
 
     for (const item of messages) {

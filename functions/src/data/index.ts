@@ -1,4 +1,9 @@
-import * as data from './recipes.json';
-import { Meal } from '../model';
+import * as recepesData from './recipes.json';
+import * as categoriesData from './categories.json';
 
-export const MEALS: Meal[] = data;
+import { Meal, Category } from '../model';
+import * as _ from 'lodash';
+
+export const MEALS: Meal[] = recepesData;
+export const CATEGORIES: Category[] = categoriesData;
+

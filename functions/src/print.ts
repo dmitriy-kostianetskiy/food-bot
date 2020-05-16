@@ -1,43 +1,45 @@
 import * as _ from 'lodash';
-import { Ingredient, Meal, Recipe, Menu } from './model';
+import { Ingredient, Meal, Recipe, Menu, Cart, CartIngredient } from './model';
 
 export function printMenu({ meals }: Menu): string[] {
   return meals.map((meal, index) => printMeal(meal, index));
 }
 
-export function printShoppingList({ meals }: Menu): string {
-  const ingredients = _(meals)
-    .flatMap((meal, index) => _.flatMap(meal.recipes, recipe => recipe.ingredients).map(ingredient => ({
-      index,
-      ingredient
-    })))
-    .groupBy(item => item.ingredient.name)
-    .map((group, groupKey)  => {
-      const amount = _(group)
-        .map(item => item.ingredient)
-        .groupBy(item => item.unit)
-        .mapValues(item => item.reduce((acc, x) => acc + x.amount, 0))
-        .map((aggregated, unit) => {
-          if (_.isFinite(aggregated)) {
-            return unit ? `${aggregated} ${unit}` : `${aggregated}`;
-          }
+function pritnCartIngredients(igredients: CartIngredient[]): string {
+  return _(igredients).map(value  => {
+    const amount = _(value.byMeals)
+      .groupBy(item => item.unit)
+      .mapValues(item => item.reduce((acc, x) => acc + x.amount, 0))
+      .map((aggregated, unit) => {
+        if (_.isFinite(aggregated)) {
+          return unit ? `${aggregated} ${unit}` : `${aggregated}`;
+        }
 
-          return null;
-        })
-        .filter(item => !!item)
-        .join(' + ');
-      
-      const indexes = _(group)
-        .map(item => item.index + 1)
-        .uniq()
-        .join(', ');
+        return null;
+      })
+      .filter(item => !!item)
+      .join(' + ');
+    
+    const indexes = _(value.byMeals)
+      .map(item => item.index + 1)
+      .uniq()
+      .join(', ');
 
-      const amountLine = amount ? ` - ${amount} ` : ' ';
+    const amountLine = amount ? ` - ${amount} ` : ' ';
 
-      return ` - ${groupKey}${amountLine}(${indexes})`;
-    })
-    .orderBy()
-    .join('\n');
+    return ` - ${value.name}${amountLine}(${indexes})`;
+  })
+  .orderBy()
+  .join('\n');
+}
+
+export function printCart(cart: Cart): string {
+  const ingredients = _(cart)
+    .reduce((acc, item, key) => {
+      const cartIngredients = pritnCartIngredients(item);
+
+      return `${acc}\n<b>${key}</b>\n${cartIngredients}`;
+    }, '');
 
   return `🛒 <b>Список покупок:</b>
 ${ingredients}`
