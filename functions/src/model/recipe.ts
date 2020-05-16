@@ -1,20 +1,25 @@
-export interface Recipe {
+export interface RecipeModel {
   readonly title?: string;
-  readonly ingredients: Ingredient[];
+  readonly ingredients: IngredientModel[];
   readonly steps: string[];
 }
 
-export interface Ingredient {
+export interface IngredientModel {
   readonly name: string;
   readonly amount?: number;
   readonly unit?: string;
 }
 
-export interface Meal {
+export interface MealModel {
   readonly readyInTime?: string;
-  readonly recipes: Recipe[];
+  readonly recipes: RecipeModel[];
 }
 
-export interface Menu {
-  readonly meals: Meal[];
+export interface MenuModel {
+  readonly meals: MealModel[];
+}
+
+export interface CategoryModel {
+  readonly name: string;
+  readonly titles: string[];
 }

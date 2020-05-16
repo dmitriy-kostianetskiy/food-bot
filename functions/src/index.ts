@@ -1,12 +1,13 @@
 import * as functions from 'firebase-functions';
 import * as _ from 'lodash';
-import { MEALS } from './data';
+import { MEALS, OTHER_CATEGORY, INGREDIENT_TO_CATEGORY_MAP } from './data';
 import { Subscription, Message } from './model';
-import { printShoppingList, printMenu } from './print'
 import { DEFAULT_REGION } from './constants';
 import { SubscriptionService, MenuService, MessagesService, pubSub, firestore } from './services';
 import Telegraf from 'telegraf';
 import { configureBot } from './bot';
+import { Cart } from './cart';
+import { Menu } from './menu';
 
 const subscriptionService = new SubscriptionService(firestore);
 const menuService = new MenuService(firestore);
@@ -22,15 +23,9 @@ export const generateMenu = region
   .schedule('every friday 12:00')
   .timeZone('Europe/Moscow')
   .onRun(async () => {
-    const meals = _(_.range(MEALS.length))
-      .shuffle()
-      .take(7)
-      .map(index => MEALS[index])
-      .value();
+    const { menu } = Menu.createRandom();
 
-    await menuService.replaceCurrentMenu({
-      meals
-    });
+    await menuService.replaceCurrentMenu(menu);
   });
 
 export const publishToAll = region
@@ -50,8 +45,13 @@ export const publishToSubscriber = region
   .firestore
   .document(`${subscriptionService.SUBSCRIPTIONS_PATH}/{subscribersId}`)
   .onCreate(async (snapshot) => {
-    const menu = await menuService.fetchCurrentMenu();
     const subscription = snapshot.data() as Subscription;
+    
+    if (!subscription?.id) {
+      return;
+    }
+
+    const menu = await menuService.fetchCurrentMenu();
 
     await messageService.publish({
       menu,
@@ -64,15 +64,21 @@ export const sendMessage = region
   .topic(messageService.MESSAGES_TOPIC_NAME)
   .onPublish(async (message) => {
     const jsonMessage = message.json as Message;
-    const { menu, subscription } = jsonMessage;
+
+    if (!jsonMessage.menu || !jsonMessage.subscription?.id) {
+      return;
+    }
+
+    const menu = new Menu(jsonMessage.menu);
+    const cart = menu.createCart();
 
     const messages = [
-      ...printMenu(menu),
-      printShoppingList(menu)
+      ...menu.print(),
+      cart.print()
     ];
 
     for (const item of messages) {
-      await bot.telegram.sendMessage(subscription.id, item, { parse_mode: 'HTML' });
+      await bot.telegram.sendMessage(jsonMessage.subscription.id, item, { parse_mode: 'HTML' });
     }
   });
 
