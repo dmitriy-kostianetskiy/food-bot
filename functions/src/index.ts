@@ -1,12 +1,10 @@
 import * as functions from 'firebase-functions';
 import * as _ from 'lodash';
-import { MEALS, OTHER_CATEGORY, INGREDIENT_TO_CATEGORY_MAP } from './data';
-import { Subscription, Message } from './model';
+import { Subscription, Message, SendMenuMessage, GenerateMenuMessage } from './model';
 import { DEFAULT_REGION } from './constants';
 import { SubscriptionService, MenuService, MessagesService, pubSub, firestore } from './services';
 import Telegraf from 'telegraf';
 import { configureBot } from './bot';
-import { Cart } from './cart';
 import { Menu } from './menu';
 
 const subscriptionService = new SubscriptionService(firestore);
@@ -23,9 +21,9 @@ export const generateMenu = region
   .schedule('every friday 12:00')
   .timeZone('Europe/Moscow')
   .onRun(async () => {
-    const { menu } = Menu.createRandom();
-
-    await menuService.replaceCurrentMenu(menu);
+    await messageService.publish(<GenerateMenuMessage>{
+      type: 'generateMenu'
+    });
   });
 
 export const publishToAll = region
@@ -35,10 +33,13 @@ export const publishToAll = region
     const subscribers = await subscriptionService.fetchSubscriptions();
     const menu = await menuService.fetchCurrentMenu();
 
-    await messageService.publish(...subscribers.map(subscription => ({
-      menu,
-      subscription
-    })));
+    await messageService.publish(...subscribers.map(subscription => {
+      return <SendMenuMessage>{
+        type: 'sendMenu',
+        menu,
+        subscription
+      }
+    }));
   });
 
 export const publishToSubscriber = region
@@ -53,7 +54,8 @@ export const publishToSubscriber = region
 
     const menu = await menuService.fetchCurrentMenu();
 
-    await messageService.publish({
+    await messageService.publish(<SendMenuMessage>{
+      type: 'sendMenu',
       menu,
       subscription
     });
@@ -65,20 +67,17 @@ export const sendMessage = region
   .onPublish(async (message) => {
     const jsonMessage = message.json as Message;
 
-    if (!jsonMessage.menu || !jsonMessage.subscription?.id) {
+    if (!jsonMessage.type) {
       return;
     }
 
-    const menu = new Menu(jsonMessage.menu);
-    const cart = menu.createCart();
-
-    const messages = [
-      ...menu.print(),
-      cart.print()
-    ];
-
-    for (const item of messages) {
-      await bot.telegram.sendMessage(jsonMessage.subscription.id, item, { parse_mode: 'HTML' });
+    switch (jsonMessage.type) {
+      case 'sendMenu':
+        await sendMenuHandler(jsonMessage);
+        return;
+      case 'generateMenu':
+        await generateMenuHandler();
+        return;
     }
   });
 
@@ -93,3 +92,28 @@ export const botHook = region
       response.status(200).send();
     }
   });
+
+
+async function sendMenuHandler(message: SendMenuMessage): Promise<void> {
+  if (!message.menu || !message.subscription?.id) {
+    return;
+  }
+
+  const menu = new Menu(message.menu);
+  const cart = menu.createCart();
+
+  const messages = [
+    ...menu.print(),
+    cart.print()
+  ];
+
+  for (const item of messages) {
+    await bot.telegram.sendMessage(message.subscription.id, item, { parse_mode: 'HTML' });
+  }
+}
+
+async function generateMenuHandler(): Promise<void> {
+  const { menu } = Menu.createRandom();
+
+  await menuService.replaceCurrentMenu(menu);
+}

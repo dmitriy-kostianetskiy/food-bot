@@ -11,3 +11,15 @@
    yarn install
    yarn deploy
    ```
+
+### Generate new menu manually
+
+Send the following JSON to `messages` topic by the link
+
+https://console.cloud.google.com/cloudpubsub/topic/detail/messages?project=generate-menu
+
+```
+{
+  "type": "generateMenu"
+}
+```
