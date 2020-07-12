@@ -12,7 +12,7 @@ indent_style = space
 indent_size = 4
 
 # web
-[*.{json,js,ts,scss,css,html}]
+[*.{json,js,ts,tsx,scss,css,html}]
 indent_size = 2
 
 # Xml config files
