@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import RecipeForm from '../components/RecipeForm';
-import categories from '../mocks/mock-categories';
 import { useParams, useHistory } from "react-router-dom";
-import { RecipeModel } from '../model/recipe-model';
-import { Fetched } from '../model/state';
+import { Fetched, RecipeModel } from '../model';
 import { firestore } from '../firebase';
-import { CircularProgress, Box } from '@material-ui/core';
+import { CircularProgress, Box, Container, Button, makeStyles, Theme, createStyles } from '@material-ui/core';
+import RecipeForm from '../components/RecipeForm';
+import useCategories from '../hooks/useCategories';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    box: {
+      padding: theme.spacing(1),
+      '& > button': {
+        marginRight: theme.spacing(1),
+      }
+    }
+  })
+);
 
 export default function EditRecipeView() {
+  const classes = useStyles();
   const { id } = useParams();
   const history = useHistory();
 
+  const categories = useCategories();
   const [recipe, setRecipe] = useState<Fetched<RecipeModel>>('loading');
 
   useEffect(() => {
@@ -40,15 +52,18 @@ export default function EditRecipeView() {
     deleteRecipe();
   };
 
-  const handleOnSave = (recipe: RecipeModel) => {
-    const saveRecipe = async () => {
-      debugger;
-      await firestore.collection('recipes').doc(id).set(recipe, { merge: true });
+  const handleOnSave: React.FormEventHandler = (event) => {
+    event.preventDefault();
 
-      history.push('/');
-    };
+    if (typeof recipe === 'object') {
+      const saveRecipe = async () => {
+        await firestore.collection('recipes').doc(id).set(recipe, { merge: true });
 
-    saveRecipe();
+        history.push('/');
+      };
+
+      saveRecipe();
+    }
   };
 
   switch (recipe) {
@@ -57,17 +72,37 @@ export default function EditRecipeView() {
     case 'error':
       return (
         <Box>
-          Unable to load reciep
+          Unable to load
         </Box>
       );
     default:
       return (
-        <RecipeForm
-          title="Edit recipe"
-          recipe={recipe}
-          categories={categories}
-          onDelete={handleOnDelete}
-          onSave={handleOnSave}/>
+        <Container>
+          <form id="recipe-form" onSubmit={handleOnSave}>
+          </form>
+          <RecipeForm
+            categories={categories}
+            recipe={recipe}
+            onChange={(recipe: RecipeModel) => setRecipe(recipe)} />
+          <Box className={classes.box}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              form="recipe-form">
+              Save
+            </Button>
+            {
+              <Button
+                variant="contained"
+                color="secondary"
+                form="recipe-form"
+                onClick={handleOnDelete}>
+                Delete
+              </Button>
+            }
+          </Box>
+        </Container>
       );
   }
 }

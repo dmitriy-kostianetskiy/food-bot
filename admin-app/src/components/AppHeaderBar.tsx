@@ -1,6 +1,8 @@
 
 import React from 'react';
-import { AppBar, Toolbar, Typography, makeStyles, Theme, createStyles, Button, Box } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, makeStyles, Theme, createStyles, Button, Box, IconButton } from '@material-ui/core';
+import HomeIcon from '@material-ui/icons/Home';
+import AddIcon from '@material-ui/icons/Add';
 import { useHistory, Link } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 
@@ -9,9 +11,12 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       flexGrow: 1,
     },
-    title: {
-      flexGrow: 1,
+    menuButton: {
+      marginRight: theme.spacing(2),
     },
+    title: {
+      flexGrow: 1
+    }
   }),
 );
 
@@ -32,7 +37,12 @@ export default function AppHeaderBar() {
 
   const toolbar = (
     <Box>
-      <Button color="inherit" component={Link} to="/recipe/new">Create recipe</Button>
+      <IconButton className={classes.menuButton} color="inherit" component={Link} to="/">
+        <HomeIcon />
+      </IconButton>
+      <IconButton className={classes.menuButton} color="inherit" component={Link} to="/recipe/new">
+        <AddIcon />
+      </IconButton>
       <Button color="inherit" onClick={handleLogout}>Logout</Button>
     </Box>
   );
@@ -41,7 +51,9 @@ export default function AppHeaderBar() {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <Typography className={classes.title} variant="h6">MenuBot admin panel</Typography>
+          <Typography variant="h6" className={classes.title}>
+          MenuBot admin panel
+          </Typography>
           { !authState.pending && authState.isSignedIn && toolbar }
         </Toolbar>
       </AppBar>

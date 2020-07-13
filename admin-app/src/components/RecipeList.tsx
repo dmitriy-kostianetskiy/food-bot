@@ -23,8 +23,8 @@ export default function RecipeList(props: RecipeListProps) {
     const link = `/recipe/${item.id}`
 
     return (
-      <ListItem button component={Link} to={link} style={style} key={item.data.title}>
-        <ListItemText primary={item.data.title} />
+      <ListItem button component={Link} to={link} style={style} key={item.id}>
+        <ListItemText primary={item.data.main.title} secondary={item.data.side?.title} />
       </ListItem>
     )
   };

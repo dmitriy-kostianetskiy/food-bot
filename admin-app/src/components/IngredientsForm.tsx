@@ -3,11 +3,10 @@ import { IngredientModel } from '../model/ingredient-model';
 import { CategoryModel } from '../model/category-model';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
-import { List, Typography, Box, ListItemSecondaryAction, IconButton, ListItemText, ListItem, TextField, FormControl, Theme, createStyles, makeStyles } from '@material-ui/core';
+import { List, Box, ListItemSecondaryAction, IconButton, Button, Divider, ListItemText, ListItem, TextField, FormControl, Theme, createStyles, makeStyles, ListSubheader } from '@material-ui/core';
 import { Autocomplete, AutocompleteRenderInputParams } from '@material-ui/lab';
 
 interface IngredientsFormProps {
-  title: string;
   ingredients: IngredientModel[];
   categories: CategoryModel[];
   onAdd: (model: IngredientModel) => void;
@@ -21,13 +20,20 @@ interface Suggestion {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    form: {
+      display: 'flex',
+      flexDirection: 'column'
+    },
     box: {
       display: 'flex',
-      '& > *': {
-        margin: theme.spacing(1),
-      }
+      flex: 1,
+      paddingLeft: theme.spacing(1)
+    },
+    list: {
+      width: '100%'
     },
     formControl: {
+      paddingRight: theme.spacing(1),
       minWidth: 200,
       flex: 1
     }
@@ -51,7 +57,7 @@ export default function IngredientsForm(props: IngredientsFormProps) {
   }
 
   const [title, setTitle] = useState('');
-  const handleTitleChage = (event: React.ChangeEvent<{}>, value: string | Suggestion | null) => {
+  const handleTitleChange = (event: React.ChangeEvent<{}>, value: string | Suggestion | null) => {
     if (typeof value === 'string') {
       setTitle(value);
     } else {
@@ -87,12 +93,31 @@ export default function IngredientsForm(props: IngredientsFormProps) {
   };
 
   return (
-    <form id="ingredients-form" onSubmit={handleSubmit}>
+    <form className={classes.form} id="ingredients-form" onSubmit={handleSubmit}>
       <Box className={classes.box}>
-        <Typography variant="h5">{props.title}</Typography>
+        <List className={classes.list} subheader={<ListSubheader component="div" style={{ paddingLeft: 0 }}>Ingredients</ListSubheader>}>
+          {
+            props.ingredients.map((ingredient, index) =>
+              <Box>
+                <Divider component="li" />
+                <ListItem key={index}>
+                  <ListItemText
+                    primary={ingredient.title}
+                    secondary={getSecondaryLine(ingredient)}/>
+                  <ListItemSecondaryAction>
+                    <IconButton edge="end" aria-label="delete" onClick={() => props.onDelete(ingredient)}>
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+                { index === props.ingredients.length - 1 && <Divider component="li" /> }
+              </Box>
+            )
+          }
+        </List>
       </Box>
       <Box className={classes.box}>
-        <FormControl className={classes.formControl}>
+        <FormControl className={classes.formControl} >
           <Autocomplete
             size="small"
             options={suggestions}
@@ -100,41 +125,26 @@ export default function IngredientsForm(props: IngredientsFormProps) {
             groupBy={(suggestion: Suggestion) => suggestion.group}
             freeSolo={true}
             inputValue={title}
-            renderInput={(params: AutocompleteRenderInputParams) => <TextField {...params} label="Ingredient"/>}
-            onChange={handleTitleChage}
-            onInputChange={handleTitleChage}/>
+            renderInput={(params: AutocompleteRenderInputParams) => <TextField {...params} variant="outlined" label="Ingredient"/>}
+            onChange={handleTitleChange}
+            onInputChange={handleTitleChange}/>
         </FormControl>
         <FormControl className={classes.formControl}>
           <TextField
             size="small"
+            variant="outlined" 
             label="Amount"
             value={amount}
             onChange={handleAmountChange}/>
         </FormControl>
-        <IconButton 
+      </Box>
+      <Box className={classes.box}>
+        <Button 
           type="submit"
           disabled={!title}
           color="primary">
-          <AddIcon />
-        </IconButton>
-      </Box>
-      <Box className={classes.box}>
-        <List>
-          {
-            props.ingredients.map((ingredient, index) =>
-              <ListItem key={index}>
-                <ListItemText
-                  primary={ingredient.title}
-                  secondary={getSecondaryLine(ingredient)}/>
-                <ListItemSecondaryAction>
-                  <IconButton edge="end" aria-label="delete" onClick={() => props.onDelete(ingredient)}>
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            )
-          }
-        </List>
+          <AddIcon /> Add ingredient
+        </Button>
       </Box>
     </form>
   );
