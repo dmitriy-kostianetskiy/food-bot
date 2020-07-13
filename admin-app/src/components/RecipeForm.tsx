@@ -10,7 +10,7 @@ interface RecipeFormProps {
   recipe: RecipeModel;
   categories: CategoryModel[];
   onSave: (recipe: RecipeModel) => void;
-  onDelete: (recipe: RecipeModel) => void;
+  onDelete?: () => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -58,11 +58,18 @@ export default function RecipeForm(props: RecipeFormProps) {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    props.onSave(props.recipe);
+    props.onSave({
+      steps: steps.split('\n'),
+      ingredients,
+      readyIn,
+      title
+    });
   };
 
   const handleDelete = () => {
-    props.onDelete(props.recipe);
+    if (props?.onDelete) {
+      props.onDelete();
+    }
   };
 
   const toSelectLabel = (value: number) => {
@@ -92,6 +99,7 @@ export default function RecipeForm(props: RecipeFormProps) {
         <FormControl className={classes.formControl}>
           <InputLabel id="ready-in-label">Ready in</InputLabel>
           <Select
+            required
             labelId="ready-in-label"
             id="ready-in-select"
             value={readyIn}
@@ -106,6 +114,7 @@ export default function RecipeForm(props: RecipeFormProps) {
       <Box className={classes.box}>
         <FormControl className={classes.formControl}>
           <TextField
+            required
             id="steps-input"
             label="Steps"
             multiline

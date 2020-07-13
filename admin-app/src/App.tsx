@@ -8,23 +8,40 @@ import {
 import './App.scss';
 
 import AppHeaderBar from './components/AppHeaderBar';
+import ProtectedRoute from './components/ProtectedRoute';
 
-import Home from './views/Home';
-import Recipe from './views/Recipe';
+import LoginView from './views/LoginView';
+import EditRecipeView from './views/EditRecipeView';
+import CreateRecipeView from './views/CreateRecipeView';
+import RecipesView from './views/RecipesView';
 
 function App() {
   return (
     <main>
-      <AppHeaderBar />
       <section className="content">
         <Router>
           <Switch>
-            <Route path="/recipe/:id" children={<Recipe />}/>
-            <Route path="/"><Home /></Route>
+            <Route path="/">
+              <AppHeaderBar />
+            </Route>
           </Switch>
-        </Router>
-      </section>
-    </main>
+          <Switch>
+          <ProtectedRoute path="/recipe/new">
+            <CreateRecipeView />
+          </ProtectedRoute>
+          <ProtectedRoute path="/recipe/:id">
+            <EditRecipeView />
+          </ProtectedRoute>
+          <Route path="/login">
+            <LoginView />
+          </Route>
+          <ProtectedRoute path="/">
+            <RecipesView />
+          </ProtectedRoute>
+        </Switch>
+      </Router>
+    </section>
+  </main>
   );
 }
 

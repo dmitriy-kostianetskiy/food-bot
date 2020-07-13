@@ -74,7 +74,7 @@ export default function IngredientsForm(props: IngredientsFormProps) {
       ? {
         title,
         amount: numericAmount,
-        unit: unitPart
+        unit: unitPart || ''
       }
       : {
         title
