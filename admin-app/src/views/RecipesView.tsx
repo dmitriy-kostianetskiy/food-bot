@@ -40,8 +40,8 @@ export default function RecipesView() {
     default:
       return (
         <RecipeList
-        title="Recipes"
-        items={recipes}/>
+          title="Recipes"
+          items={recipes}/>
       );
   }
 }

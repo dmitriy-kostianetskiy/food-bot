@@ -8,8 +8,8 @@ import useAuth from '../hooks/useAuth';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      flexGrow: 1,
+    appBar: {
+      flex: 0,
     },
     menuButton: {
       marginRight: theme.spacing(2),
@@ -48,15 +48,11 @@ export default function AppHeaderBar() {
   );
 
   return (
-    <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" className={classes.title}>
-          MenuBot admin panel
-          </Typography>
-          { !authState.pending && authState.isSignedIn && toolbar }
-        </Toolbar>
-      </AppBar>
-    </div>
+    <AppBar className={classes.appBar} position="static">
+      <Toolbar>
+        <Typography variant="h6" className={classes.title}>MenuBot admin panel</Typography>
+        { !authState.pending && authState.isSignedIn && toolbar }
+      </Toolbar>
+    </AppBar>
   );
 }

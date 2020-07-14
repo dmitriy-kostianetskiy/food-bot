@@ -17,15 +17,13 @@ import RecipesView from './views/RecipesView';
 
 function App() {
   return (
-    <main>
-      <section className="content">
-        <Router>
-          <Switch>
-            <Route path="/">
-              <AppHeaderBar />
-            </Route>
-          </Switch>
-          <Switch>
+    <Router>
+      <Switch>
+        <Route path="/">
+          <AppHeaderBar />
+        </Route>
+      </Switch>
+        <Switch>
           <ProtectedRoute path="/recipe/new">
             <CreateRecipeView />
           </ProtectedRoute>
@@ -39,9 +37,7 @@ function App() {
             <RecipesView />
           </ProtectedRoute>
         </Switch>
-      </Router>
-    </section>
-  </main>
+    </Router>
   );
 }
 
