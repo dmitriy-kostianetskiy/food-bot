@@ -33,7 +33,7 @@ export default function EditRecipeView() {
 
         setRecipe(model || 'error');
       } catch (error) {
-        console.log(error);
+        console.error(error);
 
         setRecipe('error')
       }

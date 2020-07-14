@@ -13,7 +13,7 @@ export default function useCategories(): CategoryModel[]  {
   
         setCategories(model);
       } catch (error) {
-        console.log(error);
+        console.error(error);
   
         setCategories([]);
       }
