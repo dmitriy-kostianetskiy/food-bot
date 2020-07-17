@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { AppBar, Toolbar, Typography, makeStyles, Theme, createStyles, Button, Box, IconButton } from '@material-ui/core';
 import HomeIcon from '@material-ui/icons/Home';
 import AddIcon from '@material-ui/icons/Add';
@@ -10,6 +10,11 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     appBar: {
       flex: 0,
+      display: 'flex'
+    },
+    box: {
+      flex: 0,
+      display: 'flex'
     },
     menuButton: {
       marginRight: theme.spacing(2),
@@ -20,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function AppHeaderBar() {
+export default function AppHeaderBar(props: PropsWithChildren<{}>) {
   const classes = useStyles();
   const history = useHistory();
   const [auth, authState] = useAuth();
@@ -36,7 +41,8 @@ export default function AppHeaderBar() {
   }
 
   const toolbar = (
-    <Box>
+    <Box className={classes.box}>
+      {props.children}
       <IconButton className={classes.menuButton} color="inherit" component={Link} to="/">
         <HomeIcon />
       </IconButton>

@@ -2,7 +2,8 @@ import React from 'react';
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  Redirect
 } from 'react-router-dom';
 
 import './App.scss';
@@ -33,9 +34,10 @@ function App() {
           <Route path="/login">
             <LoginView />
           </Route>
-          <ProtectedRoute path="/">
+          <ProtectedRoute path="/recipes">
             <RecipesView />
           </ProtectedRoute>
+          <Redirect to="recipes" />
         </Switch>
     </Router>
   );

@@ -5,13 +5,13 @@ import {
   RouteProps
 } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
-import { Box } from '@material-ui/core';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 export default function ProtectedRoute({ children, ...rest }: PropsWithChildren<RouteProps>) {
   const [, authState] = useAuth();
 
   if (authState.pending) {
-    return (<Box>Signing in...</Box>)
+    return (<LinearProgress />)
   }
 
   return (

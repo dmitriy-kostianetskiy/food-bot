@@ -1,47 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import RecipeList from '../components/RecipeList';
-import { RecipeModel } from '../model/recipe-model';
-import { firestore } from '../firebase';
-import { CircularProgress, Box } from '@material-ui/core';
-import { Fetched } from '../model/state';
+import React from 'react';
+import RecipesList from '../components/RecipesList';
+import Error from  '../components/Error';
+
+import LinearProgress from '@material-ui/core/LinearProgress';
+import useAllRecipes from '../hooks/useAllRecipes';
 
 export default function RecipesView() {
-  const [recipes, setRecipes] = useState<Fetched<{ id: string, data: RecipeModel }[]>>('loading');
- 
-  useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const result = await firestore.collection('recipes').get();
-        const recipes = result.docs.map(item => ({
-          id: item.id,
-          data: item.data() as RecipeModel
-        }));
-
-        setRecipes(recipes);
-      } catch (error) {
-        console.error(error);
-
-        setRecipes('error');
-      }
-    }
-
-    fetchRecipes();
-  }, []);
+  const recipes = useAllRecipes();
 
   switch (recipes) {
     case 'loading':
-      return (<CircularProgress />);
+      return (<LinearProgress />);
     case 'error':
-      return (
-        <Box>
-          Unable to load
-        </Box>
-      );
+      return (<Error />);
     default:
-      return (
-        <RecipeList
-          title="Recipes"
-          items={recipes}/>
-      );
+      return (<RecipesList title="Recipes" items={recipes}/>);
   }
 }

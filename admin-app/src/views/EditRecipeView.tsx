@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useHistory } from "react-router-dom";
-import { Fetched, RecipeModel } from '../model';
+import React, {  } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
+import { RecipeModel } from '../model';
 import { firestore } from '../firebase';
-import { CircularProgress, Box, Container, Button, makeStyles, Theme, createStyles } from '@material-ui/core';
+import { LinearProgress, Box, Container, Button, makeStyles, Theme, createStyles } from '@material-ui/core';
 import RecipeForm from '../components/RecipeForm';
 import useCategories from '../hooks/useCategories';
+import useRecipe from '../hooks/useRecipe';
+import Error from '../components/Error';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,24 +25,7 @@ export default function EditRecipeView() {
   const history = useHistory();
 
   const categories = useCategories();
-  const [recipe, setRecipe] = useState<Fetched<RecipeModel>>('loading');
-
-  useEffect(() => {
-    const fetchRecipe = async () => {
-      try {
-        const result = await firestore.doc(`recipes/${id}`).get();
-        const model = result.data() as RecipeModel;
-
-        setRecipe(model || 'error');
-      } catch (error) {
-        console.error(error);
-
-        setRecipe('error')
-      }
-    }
-
-    fetchRecipe();
-  }, [id]);
+  const [recipe, setRecipe] = useRecipe(id);
 
   const handleOnDelete = () => {
     const deleteRecipe = async () => {
@@ -68,13 +53,9 @@ export default function EditRecipeView() {
 
   switch (recipe) {
     case 'loading':
-      return (<CircularProgress />);
+      return (<LinearProgress />);
     case 'error':
-      return (
-        <Box>
-          Unable to load
-        </Box>
-      );
+      return (<Error />);
     default:
       return (
         <Container>
@@ -92,15 +73,13 @@ export default function EditRecipeView() {
               form="recipe-form">
               Save
             </Button>
-            {
-              <Button
-                variant="contained"
-                color="secondary"
-                form="recipe-form"
-                onClick={handleOnDelete}>
-                Delete
-              </Button>
-            }
+            <Button
+              variant="contained"
+              color="secondary"
+              form="recipe-form"
+              onClick={handleOnDelete}>
+              Delete
+            </Button>
           </Box>
         </Container>
       );
