@@ -56,7 +56,13 @@ export default function AppHeaderBar(props: PropsWithChildren<{}>) {
   return (
     <AppBar className={classes.appBar} position="static">
       <Toolbar>
-        <Typography variant="h6" className={classes.title}>MenuBot admin panel</Typography>
+        <Box className={classes.title}>
+          <Button className={classes.title} color="inherit" component={Link} to="/">
+            <Typography variant="h6">MenuBot admin panel</Typography>
+          </Button>
+        </Box>
+    
+        
         { !authState.pending && authState.isSignedIn && toolbar }
       </Toolbar>
     </AppBar>

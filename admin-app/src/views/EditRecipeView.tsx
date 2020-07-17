@@ -7,6 +7,7 @@ import RecipeForm from '../components/RecipeForm';
 import useCategories from '../hooks/useCategories';
 import useRecipe from '../hooks/useRecipe';
 import Error from '../components/Error';
+import useTitle from '../hooks/useTitle';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,6 +27,8 @@ export default function EditRecipeView() {
 
   const categories = useCategories();
   const [recipe, setRecipe] = useRecipe(id);
+
+  useTitle(typeof recipe === 'object' ? recipe?.main?.title : undefined);
 
   const handleOnDelete = () => {
     const deleteRecipe = async () => {

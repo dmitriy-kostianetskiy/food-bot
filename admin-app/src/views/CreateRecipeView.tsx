@@ -7,6 +7,7 @@ import RecipeForm from '../components/RecipeForm';
 import { createMeal } from '../recipe.helper';
 import useCategories from '../hooks/useCategories';
 import { Link } from 'react-router-dom';
+import useTitle from '../hooks/useTitle';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,6 +28,8 @@ export default function CreateRecipeView() {
   const [recipe, setRecipe] = useState<RecipeModel>({
     main: createMeal()
   });
+
+  useTitle(recipe ? recipe?.main?.title : 'Create new recipe');
 
   const handleOnSave: React.FormEventHandler = (event) => {
     event.preventDefault();

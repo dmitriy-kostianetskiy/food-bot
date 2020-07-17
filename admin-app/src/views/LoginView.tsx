@@ -3,10 +3,13 @@ import { Box, Button } from '@material-ui/core';
 import firebase from 'firebase';
 import { useHistory } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import useTitle from '../hooks/useTitle';
 
 export default function LoginView() {
   const history = useHistory();
   const [auth, authState] = useAuth();
+
+  useTitle('Login');
 
   useEffect(() => {
     const handleRedirect = async () => {
