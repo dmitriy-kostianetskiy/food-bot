@@ -1,7 +1,7 @@
 import React from 'react';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { ListItem, ListItemText, Typography, Box, Container, ListSubheader } from '@material-ui/core';
+import { ListItem, ListItemText, Typography, Box, Container, ListSubheader, makeStyles, Theme, createStyles } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 
 import { RecipeModel, Document } from '../model';
@@ -13,7 +13,20 @@ interface RecipeListProps {
   items: Document<RecipeModel>[]
 }
 
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    container: {
+      display: 'flex',
+      flex: 1,
+      flexDirection: 'column'
+    }
+  })
+);
+
 export default function RecipesList(props: RecipeListProps) {
+  const classes  = useStyles();
+
   const Row = ({ index, style }: ListChildComponentProps) => {
     const item = props.items[index];
     const link = `/recipe/${item.id}`;
@@ -27,7 +40,7 @@ export default function RecipesList(props: RecipeListProps) {
 
   return props.items.length
     ? (
-      <Container className="container">
+      <Container className={classes.container}>
         <ListSubheader component="div">Reipes</ListSubheader>
         <Box className="box">
           <AutoSizer>

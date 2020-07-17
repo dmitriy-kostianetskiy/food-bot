@@ -8,6 +8,7 @@ import useTitle from '../hooks/useTitle';
 
 export default function RecipesView() {
   const recipes = useAllRecipes();
+
   useTitle('Recipes');
 
   switch (recipes) {
