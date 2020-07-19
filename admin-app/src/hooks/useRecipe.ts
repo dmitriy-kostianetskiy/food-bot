@@ -14,9 +14,11 @@ export default function useRecipe(id: string): [Fetched<Fetched<RecipeModel>>, R
         setRecipe(model || 'error');
 
       } catch (error) {
-        console.error(error);
-  
-        setRecipe('error');
+        if (error.code === 'permission-denied') {
+          setRecipe('forbidden');
+        } else {
+          setRecipe('error');
+        }
       }
     }
   

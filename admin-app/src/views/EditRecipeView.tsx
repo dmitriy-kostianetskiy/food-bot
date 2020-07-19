@@ -4,6 +4,7 @@ import { RecipeModel } from '../model';
 import { firestore } from '../firebase';
 import { LinearProgress, Box, Container, Button, makeStyles, Theme, createStyles } from '@material-ui/core';
 import RecipeForm from '../components/RecipeForm';
+import ForbiddenError from '../components/ForbiddenError';
 import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog';
 import useCategories from '../hooks/useCategories';
 import useRecipe from '../hooks/useRecipe';
@@ -70,6 +71,8 @@ export default function EditRecipeView() {
       return (<LinearProgress />);
     case 'error':
       return (<Error />);
+    case 'forbidden':
+      return (<ForbiddenError/>);
     default:
       return (
         <Container>

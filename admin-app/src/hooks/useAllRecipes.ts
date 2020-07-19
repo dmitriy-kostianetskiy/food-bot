@@ -16,9 +16,11 @@ export default function useAllRecipes(): Fetched<Document<RecipeModel>[]>  {
   
         setRecipes(model);
       } catch (error) {
-        console.error(error);
-  
-        setRecipes('error');
+        if (error.code === 'permission-denied') {
+          setRecipes('forbidden');
+        } else {
+          setRecipes('error');
+        }
       }
     }
   

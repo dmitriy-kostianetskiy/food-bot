@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, Button } from '@material-ui/core';
+import { Container, Box, Button } from '@material-ui/core';
 import firebase from 'firebase';
 import { useHistory } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
@@ -39,10 +39,12 @@ export default function LoginView() {
   }
 
   return (
-    <Box>
+    <Container>
+      <Box display="flex" justifyContent="center" paddingTop="20px">
       {
-        !authState.pending && !authState.isSignedIn && <Button onClick={handleLoginClick}>Login with google</Button>
+        !authState.pending && !authState.isSignedIn && <Button variant="contained" size="large" onClick={handleLoginClick} color="secondary">Login with google</Button>
       }
-    </Box>
+      </Box>
+    </Container>
   );
 }

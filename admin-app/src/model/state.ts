@@ -1,1 +1,1 @@
-export type Fetched<T> = T | 'loading' | 'error';
+export type Fetched<T> = T | 'loading' | 'error' | 'forbidden';
