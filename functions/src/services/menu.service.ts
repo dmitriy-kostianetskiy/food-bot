@@ -1,17 +1,20 @@
-import { MenuModel } from '../model';
+import * as admin from 'firebase-admin';
 
+import { MENU_PATH } from '../constants';
+import { MenuModel } from '../model/menu-model';
+import { Service } from 'typedi';
+
+@Service()
 export class MenuService {
-  readonly CURRENT_MENU_PATH = 'menu/currentMenu';
-
-  constructor(private db: FirebaseFirestore.Firestore) {}
+  constructor(private firestore: admin.firestore.Firestore) {}
 
   async fetchCurrentMenu(): Promise<MenuModel | undefined> {
-    const menuDocument = await this.db.doc(this.CURRENT_MENU_PATH).get();
+    const menuDocument = await this.firestore.doc(MENU_PATH).get();
 
     return menuDocument.data() as MenuModel;
   }
 
   async replaceCurrentMenu(menu: MenuModel): Promise<void> {
-    await this.db.doc(this.CURRENT_MENU_PATH).set(menu);
+    await this.firestore.doc(MENU_PATH).set(menu);
   }
 }

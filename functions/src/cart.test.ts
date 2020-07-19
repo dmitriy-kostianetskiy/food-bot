@@ -1,36 +1,48 @@
-import { Cart } from "./cart";
+import { CategoryModel, MenuModel } from './model';
 
-const CATEGORIES = {
-  ['Морковь']: 'Овощи',
-  ['Помидор']: 'Овощи',
-  ['Яблоко']: 'Фрукты',
-};
+import { Cart } from './cart';
+
+const categories: CategoryModel[] = [
+  {
+    title: 'Овощи',
+    ingredients: [
+      'Морковь'
+    ]
+  },
+  {
+    title: 'Фрукты',
+    ingredients: [
+      'Яблоко'
+    ]
+  },
+];
 
 test('should place apples and carrots into fruits and vegetables categories accordingly', () => {
-  const cart = new Cart(
-    [
+  const menu: MenuModel = {
+    dinners: [
       {
-        recipes: [
-          {
-            ingredients: [
-              {
-                name: 'Морковь',
-                amount: 1,
-                unit: 'кг'
-              },
-              {
-                name: 'Яблоко',
-                amount: 2,
-                unit: 'шт'
-              }
-            ],
-            steps: []
-          }
-        ]
+        id: 'meal-id',
+        main: {
+          ingredients: [
+            {
+              title: 'Морковь',
+              amount: 1,
+              unit: 'кг'
+            },
+            {
+              title: 'Яблоко',
+              amount: 2,
+              unit: 'шт'
+            }
+          ],
+          steps: [],
+          title: 'Meal'
+        }
       }
-    ],
-    name => CATEGORIES[name]
-  );
+    ]
+  };
+
+  const cart = new Cart(menu, categories);
 
   expect(cart.print()).toBe(
 `🛒 <b>Список покупок:</b>
@@ -42,49 +54,50 @@ test('should place apples and carrots into fruits and vegetables categories acco
 });
 
 test('should set indexes and sum up weight accordingly', () => {
-  const cart = new Cart(
-    [
+  const menu: MenuModel = {
+    dinners: [
       {
-        recipes: [
-          {
-            ingredients: [
-              {
-                name: 'Морковь',
-                amount: 1,
-                unit: 'кг'
-              },
-              {
-                name: 'Яблоко',
-                amount: 2,
-                unit: 'шт'
-              }
-            ],
-            steps: []
-          }
-        ]
+        id: 'meal-1-id',
+        main: {
+          ingredients: [
+            {
+              title: 'Морковь',
+              amount: 1,
+              unit: 'кг'
+            },
+            {
+              title: 'Яблоко',
+              amount: 2,
+              unit: 'шт'
+            }
+          ],
+          steps: [],
+          title: 'Meal'
+        }
       },
       {
-        recipes: [
-          {
-            ingredients: [
-              {
-                name: 'Морковь',
-                amount: 3,
-                unit: 'кг'
-              },
-              {
-                name: 'Яблоко',
-                amount: 3,
-                unit: 'шт'
-              }
-            ],
-            steps: []
-          }
-        ]
+        id: 'meal-2-id',
+        main: {
+          ingredients: [
+            {
+              title: 'Морковь',
+              amount: 3,
+              unit: 'кг'
+            },
+            {
+              title: 'Яблоко',
+              amount: 3,
+              unit: 'шт'
+            }
+          ],
+          steps: [],
+          title: 'Meal'
+        }
       }
-    ],
-    name => CATEGORIES[name]
-  );
+    ]
+  };
+
+  const cart = new Cart(menu, categories);
 
   expect(cart.print()).toBe(
 `🛒 <b>Список покупок:</b>

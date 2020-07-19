@@ -1,17 +1,18 @@
+import * as categoriesData from './categories.json';
+import * as recipesData from './recipes.json';
+
 import { admin } from 'firestore-export-import';
-import { CATEGORIES, MEALS } from '../src/data';
-import { RecipeModel, MealModel } from '../src/model';
 
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
-  databaseURL: "https://generate-menu.firebaseio.com"
+  databaseURL: 'https://generate-menu.firebaseio.com'
 });
 
 const firestore = admin.firestore();
 
 async function uploadCategories() {
   const batch = admin.firestore().batch();
-  CATEGORIES.forEach(category => {
+  categoriesData.forEach(category => {
     const docRef = firestore.collection('categories').doc()
     batch.create(docRef, {
       title: category.name,
@@ -22,7 +23,7 @@ async function uploadCategories() {
   await batch.commit();
 }
 
-function transformMeal(meal: MealModel) {
+function transformMeal(meal) {
   return {
     main: transformRecipe(meal.recipes[0]),
     side: transformRecipe(meal.recipes[1]),
@@ -30,7 +31,7 @@ function transformMeal(meal: MealModel) {
   }
 }
 
-function transformRecipe(meal: RecipeModel) {
+function transformRecipe(meal) {
   if (!meal) {
     return null;
   }
@@ -49,7 +50,7 @@ function transformRecipe(meal: RecipeModel) {
 async function uploadRecipes() {
   const batch = admin.firestore().batch();
 
-  MEALS.forEach(meal => {
+  recipesData.forEach(meal => {
     const docRef = firestore.collection('recipes').doc()
 
     batch.create(docRef, transformMeal(meal));

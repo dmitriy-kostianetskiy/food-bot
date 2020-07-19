@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { MealModel } from './model';
-import { OTHER_CATEGORY, INGREDIENT_TO_CATEGORY_MAP } from './data';
+
+import { CategoryModel, IngredientModel, MenuModel } from './model';
 
 export type CategoryMapper = (ingredientName: string) => string;
 
@@ -13,14 +13,12 @@ export interface CartIngredient {
   }[];
 }
 
-export const defaultCategoryMapper = (ingredientName: string) => INGREDIENT_TO_CATEGORY_MAP[ingredientName] || OTHER_CATEGORY;
-
 export class Cart {
   private readonly ingredients: _.Dictionary<CartIngredient[]>;
 
   constructor(
-    private meals: MealModel[],
-    private categoryMapper: CategoryMapper = defaultCategoryMapper
+    private menu: MenuModel,
+    private categories: CategoryModel[]
   ) {
     this.ingredients = this.getCartIgredients();
   }
@@ -28,7 +26,7 @@ export class Cart {
   print(): string {
     const ingredients = _(this.ingredients)
       .reduce((acc, item, key) => {
-        const cartIngredients = this.pritnCartIngredients(item);
+        const cartIngredients = this.printCartIngredients(item);
   
         return `${acc}\n<b>${key}</b>\n${cartIngredients}`;
       }, '');
@@ -36,7 +34,7 @@ export class Cart {
     return `🛒 <b>Список покупок:</b>${ingredients}`
   }
 
-  private pritnCartIngredients(igredients: CartIngredient[]): string {
+  private printCartIngredients(igredients: CartIngredient[]): string {
     return _(igredients).map(value  => {
       const amount = _(value.byMeals)
         .groupBy(item => item.unit)
@@ -65,13 +63,17 @@ export class Cart {
   }
 
   private getCartIgredients(): _.Dictionary<CartIngredient[]> {
-    return _(this.meals)
-      .flatMap((meal, index) => _.flatMap(meal.recipes, recipe => recipe.ingredients).map(ingredient => ({
-        index,
-        ingredient
+    const mapping = _(this.categories)
+      .flatMap(item => item.ingredients.map(title => ({
+        ingredient: title,
+        category: item.title
       })))
-      .map()
-      .groupBy(item => item.ingredient.name)
+      .mapKeys(item => item.ingredient)
+      .mapValues(item => item.category)
+      .value();
+
+    return _(this.getAllIngredients())
+      .groupBy(item => item.ingredient.title)
       .map((group, groupKey)  => {
         return {
           name: groupKey,
@@ -83,7 +85,7 @@ export class Cart {
         };
       })
       .reduce((acc, item) => {
-        const cetegory = this.categoryMapper(item.name);
+        const cetegory = mapping[item.name] || 'Другое';
         if (!acc[cetegory]) {
           acc[cetegory] = [];
         }
@@ -92,5 +94,20 @@ export class Cart {
 
         return acc;
       }, {});
+  }
+
+  private getAllIngredients(): { ingredient: IngredientModel, index: number }[] {
+    return _.flatMap(this.menu.dinners, (recipe, index) => {
+      const all = recipe.main.ingredients;
+
+      if (recipe.side) {
+        all.push(...recipe.side.ingredients)
+      }
+
+      return all.map(ingredient => ({
+        index,
+        ingredient
+      }))
+    });
   }
 }

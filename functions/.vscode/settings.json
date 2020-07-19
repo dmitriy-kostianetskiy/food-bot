@@ -1,0 +1,14 @@
+{
+    "cSpell.words": [
+        "Igredients",
+        "cetegory",
+        "firestore",
+        "typedi"
+    ],
+    "eslint.enable": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "eslint.validate": ["typescript"],
+    "javascript.validate.enable": false
+}

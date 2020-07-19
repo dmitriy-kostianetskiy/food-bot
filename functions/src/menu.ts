@@ -1,47 +1,51 @@
-import { MenuModel, MealModel, RecipeModel, CategoryModel } from './model';
 import * as _ from 'lodash';
+
+import { CategoryModel, MealModel, RecipeModel } from './model';
+
 import { Cart } from './cart';
-import { MEALS } from './data';
+import { MenuModel } from './model/menu-model';
 
 export class Menu {
-  static createRandom(): Menu {
-    const meals = _(_.range(MEALS.length))
-      .shuffle()
-      .take(7)
-      .map(index => MEALS[index])
-      .value();
+  readonly cart = new Cart(this.menu, this.categories)
 
-    return new Menu({ meals });
-  }
-
-  constructor(readonly menu: MenuModel) {}
-
-  createCart(): Cart {
-    return new Cart(this.menu.meals)
-  }
+  constructor(
+    readonly menu: MenuModel,
+    readonly categories: CategoryModel[]
+  ) {}
 
   print(): string[] {
-    return this.menu.meals.map((meal, index) => this.printMeal(meal, index));
+    return this.menu.dinners.map((item, index) => this.printRecipe(item, index));
   }
 
-  private printMeal(meal: MealModel, index: number): string {
+  printWithCart(): string[] {
+    return [
+      ...this.print(),
+      this.cart.print()
+    ];
+  }
+
+  private printRecipe(recipe: RecipeModel, index: number): string {
     let result = '';
   
-    result += meal.recipes.map(recipe => this.printRecipe(recipe)).join('\n');
+    result += this.printMeal(recipe.main);
+    if (recipe.side) {
+      result += '\n' + this.printMeal(recipe.side);
+
+    }
   
-    return `<b>🍜 Ужин № ${index + 1}</b>\n<i>⏳ Время приготовления: ${meal.readyInTime}</i>\n${result}`;
+    return `<b>🍜 Ужин № ${index + 1}</b>\n<i>⏳ Время приготовления: ${recipe.readyIn}</i>\n${result}`;
   }
 
-  private printRecipe(recipe: RecipeModel): string {
-    const ingredients = recipe.ingredients
-      .map(({ amount, unit, name }) => amount && unit ? `- ${name} - ${amount} ${unit}` : `- ${name}`)
+  private printMeal(meal: MealModel): string {
+    const ingredients = meal.ingredients
+      .map(({ amount, unit, title }) => amount && unit ? `- ${title} - ${amount} ${unit}` : `- ${title}`)
       .join('\n');
   
-    const steps = recipe.steps
+    const steps = meal.steps
       .map((item, index) => `${this.printNumber(index + 1)} ${item}`)
       .join('\n');
   
-    return `🍗 <b>${recipe.title}</b>\n\n🛒 <b>Ингредиенты:</b>\n${ingredients}\n\n🍽 <b>Рецепт:</b>\n${steps}`;
+    return `🍗 <b>${meal.title}</b>\n\n🛒 <b>Ингредиенты:</b>\n${ingredients}\n\n🍽 <b>Рецепт:</b>\n${steps}`;
   }
 
   private printNumber(value: number): string {
