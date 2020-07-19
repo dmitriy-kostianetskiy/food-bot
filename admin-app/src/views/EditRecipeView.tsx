@@ -1,9 +1,10 @@
-import React, {  } from 'react';
+import React, { useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { RecipeModel } from '../model';
 import { firestore } from '../firebase';
 import { LinearProgress, Box, Container, Button, makeStyles, Theme, createStyles } from '@material-ui/core';
 import RecipeForm from '../components/RecipeForm';
+import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog';
 import useCategories from '../hooks/useCategories';
 import useRecipe from '../hooks/useRecipe';
 import Error from '../components/Error';
@@ -30,7 +31,13 @@ export default function EditRecipeView() {
 
   useTitle(typeof recipe === 'object' ? recipe?.main?.title : undefined);
 
+  const [open, setOpen] = useState(false);
+
   const handleOnDelete = () => {
+    setOpen(true);
+  };
+
+  const handleOnConfirm = () => {
     const deleteRecipe = async () => {
       await firestore.collection('recipes').doc(id).delete();
 
@@ -38,6 +45,10 @@ export default function EditRecipeView() {
     };
 
     deleteRecipe();
+  };
+
+  const handleOnCancel = () => {
+    setOpen(false);
   };
 
   const handleOnSave: React.FormEventHandler = (event) => {
@@ -83,6 +94,11 @@ export default function EditRecipeView() {
               onClick={handleOnDelete}>
               Delete
             </Button>
+            <DeleteConfirmationDialog
+              open={open}
+              onCancel={handleOnCancel}
+              onConfirm={handleOnConfirm}
+            />
           </Box>
         </Container>
       );
