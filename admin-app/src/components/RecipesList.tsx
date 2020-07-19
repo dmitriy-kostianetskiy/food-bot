@@ -1,8 +1,8 @@
 import React from 'react';
-import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { ListItem, ListItemText, Typography, Box, Container, ListSubheader, makeStyles, Theme, createStyles } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import { Virtuoso } from 'react-virtuoso'
 
 import { RecipeModel, Document } from '../model';
 
@@ -27,12 +27,12 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function RecipesList(props: RecipeListProps) {
   const classes  = useStyles();
 
-  const Row = ({ index, style }: ListChildComponentProps) => {
+  const Row = (index: number) => {
     const item = props.items[index];
     const link = `/recipe/${item.id}`;
 
     return (
-      <ListItem button component={Link} to={link} style={style} key={item.id}>
+      <ListItem button component={Link} to={link} key={item.id}>
         <ListItemText primary={item.data.main.title} secondary={item.data.side?.title} />
       </ListItem>
     );
@@ -46,9 +46,10 @@ export default function RecipesList(props: RecipeListProps) {
           <AutoSizer>
             {({ height, width }) => (
               <div>
-                <FixedSizeList height={height} width={width} itemSize={50} itemCount={props.items.length}>
-                {Row}
-                </FixedSizeList>
+                <Virtuoso
+                  style={{ width: width, height: height }}
+                  totalCount={props.items.length}
+                  item={index => Row(index)} />
               </div>
             )}
           </AutoSizer>
