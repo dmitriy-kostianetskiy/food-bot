@@ -41,7 +41,7 @@ export default function RecipesList(props: RecipeListProps) {
   return props.items.length
     ? (
       <Container className={classes.container}>
-        <ListSubheader component="div">Reipes</ListSubheader>
+        <ListSubheader component="div">Recipes</ListSubheader>
         <Box className="box">
           <AutoSizer>
             {({ height, width }) => (
