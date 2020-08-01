@@ -7,8 +7,8 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import useAllRecipes from '../hooks/useAllRecipes';
 import useTitle from '../hooks/useTitle';
 
-export default function RecipesView() {
-  const recipes = useAllRecipes();
+export default function RecipesView(props: { searchTerm: string }) {
+  const recipes = useAllRecipes(props.searchTerm);
 
   useTitle('Recipes');
 
@@ -20,6 +20,6 @@ export default function RecipesView() {
     case 'forbidden':
       return (<ForbiddenError/>);
     default:
-      return (<RecipesList title="Recipes" items={recipes}/>);
+      return (<RecipesList title="Recipes" items={recipes} />);
   }
 }

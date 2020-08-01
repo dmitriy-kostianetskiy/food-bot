@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import {  RecipeModel, Fetched, Document } from '../model';
+import {  RecipeModel, Fetched, Document, isLoaded } from '../model';
 import { firestore } from '../firebase';
 
-export default function useAllRecipes(): Fetched<Document<RecipeModel>[]>  {
+export default function useAllRecipes(searchTerm: string): Fetched<Document<RecipeModel>[]>  {
   const [recipes, setRecipes] = useState<Fetched<Document<RecipeModel>[]>>('loading');
 
   useEffect(() => {
@@ -23,9 +23,14 @@ export default function useAllRecipes(): Fetched<Document<RecipeModel>[]>  {
         }
       }
     }
-  
+
     fetch();
   }, []);
+
+  const cleanSearchTerm = searchTerm?.trim();
+  if (isLoaded(recipes) && cleanSearchTerm) {
+    return recipes.filter(x => x.data.main.title.includes(cleanSearchTerm) || x.data.side?.title?.includes(cleanSearchTerm));
+  }
 
   return recipes;
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -17,11 +17,15 @@ import CreateRecipeView from './views/CreateRecipeView';
 import RecipesView from './views/RecipesView';
 
 function App() {
+  const [searchTerm, setSearchTerm] = useState('');
+
   return (
     <Router>
       <Switch>
         <Route path="/">
-          <AppHeaderBar />
+          <AppHeaderBar
+            searchTerm={searchTerm}
+            onSearchTermChange={setSearchTerm}/>
         </Route>
       </Switch>
         <Switch>
@@ -35,7 +39,7 @@ function App() {
             <LoginView />
           </Route>
           <ProtectedRoute path="/recipes">
-            <RecipesView />
+            <RecipesView searchTerm={searchTerm}/>
           </ProtectedRoute>
           <Redirect to="recipes" />
         </Switch>

@@ -25,14 +25,13 @@
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^5.1.5",
     "@types/react-virtualized-auto-sizer": "^1.0.0",
-    "typescript": "~3.7.2"
+    "typescript": "~3.8.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "deploy": "yarn build && yarn firebase deploy --only hosting"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
