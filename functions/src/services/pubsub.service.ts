@@ -13,8 +13,8 @@ export class PubsubService {
   constructor(private pubsub: PubSub) {}
 
   async publish(topic: 'generate-menu'): Promise<void>;
-  async publish(topic: 'bot-messages', ...messages: BotMessage[]): Promise<void>;
-  async publish(topic: Topic, ...messages: object[]): Promise<void> {
-    await Promise.all(messages.map(message => this.pubsub.topic(topic).publishJSON(message)));
+  async publish(topic: 'bot-messages', message: BotMessage): Promise<void>;
+  async publish(topic: Topic, message?: object): Promise<void> {
+    await this.pubsub.topic(topic).publishJSON(message || {});
   }
 }

@@ -38,12 +38,12 @@ export default class PublishMenuToAllFunctionCreator extends FunctionCreator {
     
         const menu = new Menu(menuModel, categories);
         const messages = menu.printWithCart();
-    
-        await this.pubsubService.publish('bot-messages',
-          ...subscriptions.map(subscription => ({
-              messages,
-              subscriberId: subscription.id
-            }
+
+        await Promise.all(
+          subscriptions.map(subscription => (this.pubsubService.publish('bot-messages', {
+            messages,
+            subscriberId: subscription.id
+          })
         )));
       });
   }

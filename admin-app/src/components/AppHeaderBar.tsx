@@ -6,6 +6,7 @@ import AddIcon from '@material-ui/icons/Add';
 import { useHistory, Link } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import SearchIcon from '@material-ui/icons/Search';
+import RestaurantMenuIcon from '@material-ui/icons/RestaurantMenu';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -83,6 +84,13 @@ export default function AppHeaderBar(props: PropsWithChildren<{
     logout();
   }
 
+  const handleGenerateMenu = async () => {
+    // TODO: add toast
+    await fetch('https://europe-west3-generate-menu.cloudfunctions.net/generateMenuHttps', {
+      mode: 'no-cors'
+    })
+  }
+
   const toolbar = (
     <Box className={classes.box}>
       {props.children}
@@ -102,6 +110,9 @@ export default function AppHeaderBar(props: PropsWithChildren<{
       </div>
       <IconButton className={classes.menuButton} color="inherit" component={Link} to="/">
         <HomeIcon />
+      </IconButton>
+      <IconButton className={classes.menuButton} color="inherit" onClick={() => handleGenerateMenu()}>
+        <RestaurantMenuIcon />
       </IconButton>
       <IconButton className={classes.menuButton} color="inherit" component={Link} to="/recipe/new">
         <AddIcon />

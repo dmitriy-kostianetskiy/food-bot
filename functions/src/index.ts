@@ -6,14 +6,18 @@ import PublishMenuToSubscriberFunctionCreator from './functions/publish-menu-to-
 import ScheduleGenerateMenuFunctionCreator from './functions/schedule-generate-menu';
 import TelegramBotHookFunctionCreator from './functions/telegram-bot-hook';
 import TelegramSendMessageFunctionCreator from './functions/telegram-send-message';
+import GenerateMenuHttpFunctionCreator from './functions/generate-menu-http';
 import bootstrap from './bootstrap';
 
 const createFunction = bootstrap();
 
 export const generateMenu = createFunction(GenerateMenuFunctionCreator);
+export const generateMenuHttps = createFunction(GenerateMenuHttpFunctionCreator);
 export const publishMenuToAll = createFunction(PublishMenuToAllFunctionCreator);
 export const publishMenuToSubscriber = createFunction(PublishMenuToSubscriberFunctionCreator);
 export const scheduleGenerateMenu = createFunction(ScheduleGenerateMenuFunctionCreator);
 export const telegramBotHook = createFunction(TelegramBotHookFunctionCreator);
 export const telegramSendMessage = createFunction(TelegramSendMessageFunctionCreator);
+
+
 
