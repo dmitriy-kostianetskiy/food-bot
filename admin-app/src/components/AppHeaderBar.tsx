@@ -1,9 +1,10 @@
 
-import React, { PropsWithChildren } from 'react'
-import { AppBar, Toolbar, Typography, makeStyles, Theme, createStyles, Button, Box, IconButton, InputBase, fade } from '@material-ui/core'
+import React, { PropsWithChildren, useState } from 'react'
+import { AppBar, Toolbar, Typography, makeStyles, Theme, createStyles, Button, Box, IconButton, InputBase, fade, Snackbar } from '@material-ui/core'
 import { Home, Add, Search, RestaurantMenu } from '@material-ui/icons'
 import { useHistory, Link } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
+import { Alert } from '@material-ui/lab'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -71,6 +72,8 @@ export default function AppHeaderBar(props: PropsWithChildren<{
   const history = useHistory()
   const [auth, authState] = useAuth()
 
+  const [showGenerateMenuToast, setShowGenerateMenuToast] = useState<'success' | 'error'>()
+
   const handleLogout = () => {
     const logout = async () => {
       await auth.signOut()
@@ -82,11 +85,18 @@ export default function AppHeaderBar(props: PropsWithChildren<{
   }
 
   const handleGenerateMenu = async () => {
-    // TODO: add toast
-    await fetch('https://europe-west3-generate-menu.cloudfunctions.net/generateMenuHttps', {
-      mode: 'no-cors'
-    })
+    try {
+      const response = await fetch('https://europe-west3-generate-menu.cloudfunctions.net/generateMenuHttps')
+
+      setShowGenerateMenuToast(response.ok ? 'success' : 'error')
+    } catch (e) {
+      console.error(e)
+
+      setShowGenerateMenuToast('error')
+    }
   }
+
+  const handleCloseAlert = () => setShowGenerateMenuToast(undefined)
 
   const toolbar = (
     <Box className={classes.box}>
@@ -105,18 +115,29 @@ export default function AppHeaderBar(props: PropsWithChildren<{
           }}
         />
       </div>
-      <IconButton className={classes.menuButton} color="inherit" component={Link} to="/">
+      <IconButton className={classes.menuButton} color="inherit" component={Link} to="/" title="Home">
         <Home />
       </IconButton>
-      <IconButton className={classes.menuButton} color="inherit" onClick={() => handleGenerateMenu()}>
+      <IconButton className={classes.menuButton} color="inherit" onClick={() => handleGenerateMenu()} title="Generate new menu">
         <RestaurantMenu />
       </IconButton>
-      <IconButton className={classes.menuButton} color="inherit" component={Link} to="/recipe/new">
+      <IconButton className={classes.menuButton} color="inherit" component={Link} to="/recipe/new" title="Create new recipe">
         <Add />
       </IconButton>
       <Button color="inherit" onClick={handleLogout}>Logout</Button>
     </Box>
   )
+
+  const getAlert = () => {
+    switch (showGenerateMenuToast) {
+      case 'success':
+        return (<Alert onClose={handleCloseAlert} severity="success">The new menu has been generated!</Alert>)
+      case 'error':
+        return (<Alert onClose={handleCloseAlert} severity="error">Unable to generate new menu!</Alert>)
+      default:
+        return undefined
+    }
+  }
 
   return (
     <AppBar className={classes.appBar} position="static">
@@ -126,9 +147,11 @@ export default function AppHeaderBar(props: PropsWithChildren<{
             <Typography variant="h6">MenuBot admin panel</Typography>
           </Button>
         </Box>
-
         { !authState.pending && authState.isSignedIn && toolbar }
       </Toolbar>
+      <Snackbar open={!!showGenerateMenuToast} autoHideDuration={6000} onClose={handleCloseAlert}>
+        {getAlert()}
+      </Snackbar>
     </AppBar>
   )
 }

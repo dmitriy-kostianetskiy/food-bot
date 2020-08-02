@@ -1,7 +1,8 @@
 {
     "env": {
         "browser": true,
-        "es2020": true
+        "es2020": true,
+        "jest": true
     },
     "extends": [
         "plugin:react/recommended",
@@ -27,6 +28,8 @@
         {
           "patterns": ["@material-ui/*/*/*", "!@material-ui/core/test-utils/*"]
         }
-      ]
+      ],
+      "no-useless-constructor": "off",
+      "no-dupe-class-members": "off"
     }
 }
