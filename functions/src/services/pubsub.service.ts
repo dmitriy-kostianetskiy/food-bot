@@ -1,5 +1,5 @@
-import { PubSub } from '@google-cloud/pubsub';
-import { Service } from 'typedi';
+import { PubSub } from '@google-cloud/pubsub'
+import { Service } from 'typedi'
 
 export type Topic = 'bot-messages' | 'generate-menu';
 
@@ -15,6 +15,6 @@ export class PubsubService {
   async publish(topic: 'generate-menu'): Promise<void>;
   async publish(topic: 'bot-messages', message: BotMessage): Promise<void>;
   async publish(topic: Topic, message?: object): Promise<void> {
-    await this.pubsub.topic(topic).publishJSON(message || {});
+    await this.pubsub.topic(topic).publishJSON(message || {})
   }
 }

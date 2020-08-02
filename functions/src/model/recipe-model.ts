@@ -1,4 +1,4 @@
-import { IngredientModel } from './ingredient-model';
+import { IngredientModel } from './ingredient-model'
 
 export interface RecipeModel {
   id: string;

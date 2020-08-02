@@ -1,6 +1,6 @@
-import { CategoryModel, MenuModel } from './model';
+import { CategoryModel, MenuModel } from './model'
 
-import { Cart } from './cart';
+import { Cart } from './cart'
 
 const categories: CategoryModel[] = [
   {
@@ -14,8 +14,8 @@ const categories: CategoryModel[] = [
     ingredients: [
       'Яблоко'
     ]
-  },
-];
+  }
+]
 
 test('should place apples and carrots into fruits and vegetables categories accordingly', () => {
   const menu: MenuModel = {
@@ -40,9 +40,9 @@ test('should place apples and carrots into fruits and vegetables categories acco
         }
       }
     ]
-  };
+  }
 
-  const cart = new Cart(menu, categories);
+  const cart = new Cart(menu, categories)
 
   expect(cart.print()).toBe(
 `🛒 <b>Список покупок:</b>
@@ -50,8 +50,8 @@ test('should place apples and carrots into fruits and vegetables categories acco
  - Морковь - 1 кг (1)
 <b>Фрукты</b>
  - Яблоко - 2 шт (1)`
-  );
-});
+  )
+})
 
 test('should set indexes and sum up weight accordingly', () => {
   const menu: MenuModel = {
@@ -95,9 +95,9 @@ test('should set indexes and sum up weight accordingly', () => {
         }
       }
     ]
-  };
+  }
 
-  const cart = new Cart(menu, categories);
+  const cart = new Cart(menu, categories)
 
   expect(cart.print()).toBe(
 `🛒 <b>Список покупок:</b>
@@ -105,5 +105,5 @@ test('should set indexes and sum up weight accordingly', () => {
  - Морковь - 4 кг (1, 2)
 <b>Фрукты</b>
  - Яблоко - 5 шт (1, 2)`
-  );
-});
+  )
+})

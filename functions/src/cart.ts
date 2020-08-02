@@ -1,6 +1,6 @@
-import * as _ from 'lodash';
+import * as _ from 'lodash'
 
-import { CategoryModel, IngredientModel, MenuModel } from './model';
+import { CategoryModel, IngredientModel, MenuModel } from './model'
 
 export type CategoryMapper = (ingredientName: string) => string;
 
@@ -20,46 +20,46 @@ export class Cart {
     private menu: MenuModel,
     private categories: CategoryModel[]
   ) {
-    this.ingredients = this.getCartIgredients();
+    this.ingredients = this.getCartIgredients()
   }
 
   print(): string {
     const ingredients = _(this.ingredients)
       .reduce((acc, item, key) => {
-        const cartIngredients = this.printCartIngredients(item);
-  
-        return `${acc}\n<b>${key}</b>\n${cartIngredients}`;
-      }, '');
-  
+        const cartIngredients = this.printCartIngredients(item)
+
+        return `${acc}\n<b>${key}</b>\n${cartIngredients}`
+      }, '')
+
     return `🛒 <b>Список покупок:</b>${ingredients}`
   }
 
   private printCartIngredients(igredients: CartIngredient[]): string {
-    return _(igredients).map(value  => {
+    return _(igredients).map(value => {
       const amount = _(value.byMeals)
         .groupBy(item => item.unit)
         .mapValues(item => item.reduce((acc, x) => acc + x.amount, 0))
         .map((aggregated, unit) => {
-          if (_.isFinite(aggregated)) {
-            return unit ? `${aggregated} ${unit}` : `${aggregated}`;
+          if (_.isFinite(aggregated) || !aggregated) {
+            return unit ? `${aggregated} ${unit}` : `${aggregated}`
           }
-  
-          return null;
+
+          return null
         })
         .filter(item => !!item)
-        .join(' + ');
-      
+        .join(' + ')
+
       const indexes = _(value.byMeals)
         .map(item => item.index + 1)
         .uniq()
-        .join(', ');
-  
-      const amountLine = amount ? ` - ${amount} ` : ' ';
-  
-      return ` - ${value.name}${amountLine}(${indexes})`;
+        .join(', ')
+
+      const amountLine = amount ? ` - ${amount} ` : ' '
+
+      return ` - ${value.name}${amountLine}(${indexes})`
     })
-    .orderBy()
-    .join('\n');
+      .orderBy()
+      .join('\n')
   }
 
   private getCartIgredients(): _.Dictionary<CartIngredient[]> {
@@ -70,11 +70,11 @@ export class Cart {
       })))
       .mapKeys(item => item.ingredient)
       .mapValues(item => item.category)
-      .value();
+      .value()
 
     return _(this.getAllIngredients())
       .groupBy(item => item.ingredient.title)
-      .map((group, groupKey)  => {
+      .map((group, groupKey) => {
         return {
           name: groupKey,
           byMeals: group.map(item => ({
@@ -82,23 +82,23 @@ export class Cart {
             amount: item.ingredient.amount,
             unit: item.ingredient.unit
           }))
-        };
+        }
       })
       .reduce((acc, item) => {
-        const cetegory = mapping[item.name] || 'Другое';
+        const cetegory = mapping[item.name] || 'Другое'
         if (!acc[cetegory]) {
-          acc[cetegory] = [];
+          acc[cetegory] = []
         }
 
-        acc[cetegory].push(item);
+        acc[cetegory].push(item)
 
-        return acc;
-      }, {});
+        return acc
+      }, {})
   }
 
   private getAllIngredients(): { ingredient: IngredientModel, index: number }[] {
     return _.flatMap(this.menu.dinners, (recipe, index) => {
-      const all = recipe.main.ingredients;
+      const all = recipe.main.ingredients
 
       if (recipe.side) {
         all.push(...recipe.side.ingredients)
@@ -108,6 +108,6 @@ export class Cart {
         index,
         ingredient
       }))
-    });
+    })
   }
 }

@@ -30,7 +30,6 @@
 //       categoryService.fetchAll()
 //     ]);
 
-
 //     const menu = new Menu(menuModel, categories);
 //     const messages = menu.printWithCart();
 
@@ -42,14 +41,13 @@
 //     )));
 //   });
 
-  
 // export const publishToPeer = functions
 //   .region(DEFAULT_REGION)
 //   .firestore
 //   .document(`${SUBSCRIPTIONS_PATH}/{subscribersId}`)
 //   .onCreate(async (snapshot) => {
 //     const subscription = snapshot.data() as Subscription;
-    
+
 //     if (!subscription?.id) {
 //       return;
 //     }

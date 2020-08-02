@@ -1,4 +1,4 @@
-import { RecipeModel } from './recipe-model';
+import { RecipeModel } from './recipe-model'
 
 export interface MenuModel {
   dinners: RecipeModel[];

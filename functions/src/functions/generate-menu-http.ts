@@ -1,14 +1,14 @@
-import { region, HttpsFunction } from 'firebase-functions';
+import { region, HttpsFunction } from 'firebase-functions'
 
-import { DEFAULT_REGION } from '../constants';
-import { FunctionCreator } from './function-creator';
-import { Service } from 'typedi';
-import { PubsubService } from '../services/pubsub.service';
+import { DEFAULT_REGION } from '../constants'
+import { FunctionCreator } from './function-creator'
+import { Service } from 'typedi'
+import { PubsubService } from '../services/pubsub.service'
 
 @Service()
 export default class GenerateMenuHttpFunctionCreator extends FunctionCreator {
   constructor (private messagesService: PubsubService) {
-    super();
+    super()
   }
 
   createFunction(): HttpsFunction {
@@ -16,14 +16,14 @@ export default class GenerateMenuHttpFunctionCreator extends FunctionCreator {
       .https
       .onRequest(async (request, response) => {
         try {
-          await this.messagesService.publish('generate-menu');
+          await this.messagesService.publish('generate-menu')
 
-          response.status(200).send();
+          response.status(200).send()
         } catch (e) {
-          console.error(e);
+          console.error(e)
 
-          response.status(500).send();
+          response.status(500).send()
         }
-      });
+      })
   }
 }
