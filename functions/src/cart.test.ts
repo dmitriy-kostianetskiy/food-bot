@@ -107,3 +107,30 @@ test('should set indexes and sum up weight accordingly', () => {
  - Яблоко - 5 шт (1, 2)`
   )
 })
+
+test('should not display unit of measure', () => {
+  const menu: MenuModel = {
+    dinners: [
+      {
+        id: 'meal-id',
+        main: {
+          ingredients: [
+            {
+              title: 'Соль'
+            }
+          ],
+          steps: [],
+          title: 'Meal'
+        }
+      }
+    ]
+  }
+
+  const cart = new Cart(menu, categories)
+
+  expect(cart.print()).toBe(
+`🛒 <b>Список покупок:</b>
+<b>Другое</b>
+ - Соль (1)`
+  )
+})

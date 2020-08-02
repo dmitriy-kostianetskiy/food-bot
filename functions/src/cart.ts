@@ -40,7 +40,7 @@ export class Cart {
         .groupBy(item => item.unit)
         .mapValues(item => item.reduce((acc, x) => acc + x.amount, 0))
         .map((aggregated, unit) => {
-          if (_.isFinite(aggregated) || !aggregated) {
+          if (_.isFinite(aggregated) && aggregated) {
             return unit ? `${aggregated} ${unit}` : `${aggregated}`
           }
 
