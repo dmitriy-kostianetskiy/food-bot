@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { Container, Box, Button } from '@material-ui/core'
-import firebase from 'firebase'
+import firebase from 'firebase/app'
 import { useHistory } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
 import useTitle from '../hooks/useTitle'

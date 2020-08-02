@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { auth } from '../firebase'
-import { User } from 'firebase'
+import { User } from 'firebase/app'
 
 export interface AuthState {
   isSignedIn: boolean;
