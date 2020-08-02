@@ -1,12 +1,9 @@
 
-import React, { PropsWithChildren } from 'react';
-import { AppBar, Toolbar, Typography, makeStyles, Theme, createStyles, Button, Box, IconButton, InputBase, fade } from '@material-ui/core';
-import HomeIcon from '@material-ui/icons/Home';
-import AddIcon from '@material-ui/icons/Add';
-import { useHistory, Link } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
-import SearchIcon from '@material-ui/icons/Search';
-import RestaurantMenuIcon from '@material-ui/icons/RestaurantMenu';
+import React, { PropsWithChildren } from 'react'
+import { AppBar, Toolbar, Typography, makeStyles, Theme, createStyles, Button, Box, IconButton, InputBase, fade } from '@material-ui/core'
+import { Home, Add, Search, RestaurantMenu } from '@material-ui/icons'
+import { useHistory, Link } from 'react-router-dom'
+import useAuth from '../hooks/useAuth'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -19,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex'
     },
     menuButton: {
-      marginRight: theme.spacing(2),
+      marginRight: theme.spacing(2)
     },
     title: {
       flexGrow: 1
@@ -30,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: theme.shape.borderRadius,
       backgroundColor: fade(theme.palette.common.white, 0.15),
       '&:hover': {
-        backgroundColor: fade(theme.palette.common.white, 0.25),
+        backgroundColor: fade(theme.palette.common.white, 0.25)
       },
       marginRight: theme.spacing(2),
       marginLeft: 0,
@@ -38,8 +35,8 @@ const useStyles = makeStyles((theme: Theme) =>
       alignSelf: 'center',
       [theme.breakpoints.up('sm')]: {
         marginLeft: theme.spacing(3),
-        width: 'auto',
-      },
+        width: 'auto'
+      }
     },
     searchIcon: {
       padding: theme.spacing(0, 2),
@@ -48,10 +45,10 @@ const useStyles = makeStyles((theme: Theme) =>
       pointerEvents: 'none',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'center'
     },
     inputRoot: {
-      color: 'inherit',
+      color: 'inherit'
     },
     inputInput: {
       padding: theme.spacing(1, 1, 1, 0),
@@ -60,28 +57,28 @@ const useStyles = makeStyles((theme: Theme) =>
       transition: theme.transitions.create('width'),
       width: '100%',
       [theme.breakpoints.up('md')]: {
-        width: '20ch',
-      },
-    },
-  }),
-);
+        width: '20ch'
+      }
+    }
+  })
+)
 
 export default function AppHeaderBar(props: PropsWithChildren<{
   searchTerm: string,
   onSearchTermChange: (value: string) => void
 }>) {
-  const classes = useStyles();
-  const history = useHistory();
-  const [auth, authState] = useAuth();
+  const classes = useStyles()
+  const history = useHistory()
+  const [auth, authState] = useAuth()
 
   const handleLogout = () => {
     const logout = async () => {
-      await auth.signOut();
-  
-      history.push('/login');
+      await auth.signOut()
+
+      history.push('/login')
     }
 
-    logout();
+    logout()
   }
 
   const handleGenerateMenu = async () => {
@@ -96,7 +93,7 @@ export default function AppHeaderBar(props: PropsWithChildren<{
       {props.children}
       <div className={classes.search}>
         <div className={classes.searchIcon}>
-          <SearchIcon />
+          <Search />
         </div>
         <InputBase
           placeholder="Search…"
@@ -104,22 +101,22 @@ export default function AppHeaderBar(props: PropsWithChildren<{
           onChange={event => props.onSearchTermChange(event.target.value)}
           classes={{
             root: classes.inputRoot,
-            input: classes.inputInput,
+            input: classes.inputInput
           }}
         />
       </div>
       <IconButton className={classes.menuButton} color="inherit" component={Link} to="/">
-        <HomeIcon />
+        <Home />
       </IconButton>
       <IconButton className={classes.menuButton} color="inherit" onClick={() => handleGenerateMenu()}>
-        <RestaurantMenuIcon />
+        <RestaurantMenu />
       </IconButton>
       <IconButton className={classes.menuButton} color="inherit" component={Link} to="/recipe/new">
-        <AddIcon />
+        <Add />
       </IconButton>
       <Button color="inherit" onClick={handleLogout}>Logout</Button>
     </Box>
-  );
+  )
 
   return (
     <AppBar className={classes.appBar} position="static">
@@ -129,10 +126,9 @@ export default function AppHeaderBar(props: PropsWithChildren<{
             <Typography variant="h6">MenuBot admin panel</Typography>
           </Button>
         </Box>
-    
-        
+
         { !authState.pending && authState.isSignedIn && toolbar }
       </Toolbar>
     </AppBar>
-  );
+  )
 }

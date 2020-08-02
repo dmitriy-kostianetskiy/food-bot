@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { auth } from '../firebase';
-import { User } from 'firebase';
+import { auth } from '../firebase'
+import { User } from 'firebase'
 
 export interface AuthState {
   isSignedIn: boolean;
@@ -13,15 +13,15 @@ export default function useAuth(): [firebase.auth.Auth, AuthState] {
     isSignedIn: false,
     pending: true,
     user: null
-  });
+  })
 
   useEffect(() => {
     const unregisterAuthObserver = auth.onAuthStateChanged(user =>
       setAuthState({ user, pending: false, isSignedIn: !!user })
-    );
+    )
 
-    return () => unregisterAuthObserver();
-  }, []);
+    return () => unregisterAuthObserver()
+  }, [])
 
-  return [auth, authState];
+  return [auth, authState]
 }

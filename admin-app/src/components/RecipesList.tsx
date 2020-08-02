@@ -1,18 +1,15 @@
-import React from 'react';
-import AutoSizer from 'react-virtualized-auto-sizer';
-import { ListItem, ListItemText, Typography, Box, Container, ListSubheader, makeStyles, Theme, createStyles } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import React from 'react'
+import AutoSizer from 'react-virtualized-auto-sizer'
+import { ListItem, ListItemText, Typography, Box, Container, ListSubheader, makeStyles, Theme, createStyles } from '@material-ui/core'
+import { Link } from 'react-router-dom'
 import { Virtuoso } from 'react-virtuoso'
 
-import { RecipeModel, Document } from '../model';
-
-import './RecipesList.scss';
+import { RecipeModel, Document } from '../model'
 
 interface RecipeListProps {
   title: string;
   items: Document<RecipeModel>[]
 }
-
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,29 +17,32 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flex: 1,
       flexDirection: 'column'
+    },
+    box: {
+      height: '100%'
     }
   })
-);
+)
 
 export default function RecipesList(props: RecipeListProps) {
-  const classes  = useStyles();
+  const classes = useStyles()
 
   const Row = (index: number) => {
-    const item = props.items[index];
-    const link = `/recipe/${item.id}`;
+    const item = props.items[index]
+    const link = `/recipe/${item.id}`
 
     return (
       <ListItem button component={Link} to={link} key={item.id}>
         <ListItemText primary={item.data.main.title} secondary={item.data.side?.title} />
       </ListItem>
-    );
-  };
+    )
+  }
 
   return props.items.length
     ? (
       <Container className={classes.container}>
         <ListSubheader component="div">Recipes</ListSubheader>
-        <Box className="box">
+        <Box className={classes.box}>
           <AutoSizer>
             {({ height, width }) => (
               <div>
@@ -55,8 +55,8 @@ export default function RecipesList(props: RecipeListProps) {
           </AutoSizer>
         </Box>
       </Container>
-      )
+    )
     : (
       <Typography variant="h5">Oops! No recipes</Typography>
-    );
+    )
 }

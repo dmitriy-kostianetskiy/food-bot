@@ -1,4 +1,4 @@
-import { MealModel } from './model';
+import { MealModel } from './model'
 
 export function createMeal(meal?: Partial<MealModel>): MealModel {
   return {
@@ -6,5 +6,5 @@ export function createMeal(meal?: Partial<MealModel>): MealModel {
     steps: [],
     title: '',
     ...(meal || {})
-  };
+  }
 }

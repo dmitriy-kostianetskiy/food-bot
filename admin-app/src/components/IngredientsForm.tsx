@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { IngredientModel } from '../model/ingredient-model';
-import { CategoryModel } from '../model/category-model';
-import DeleteIcon from '@material-ui/icons/Delete';
-import AddIcon from '@material-ui/icons/Add';
-import { List, Box, ListItemSecondaryAction, IconButton, Button, Divider, ListItemText, ListItem, TextField, FormControl, Theme, createStyles, makeStyles, ListSubheader } from '@material-ui/core';
-import { Autocomplete, AutocompleteRenderInputParams } from '@material-ui/lab';
+import React, { useState } from 'react'
+import { IngredientModel } from '../model/ingredient-model'
+import { CategoryModel } from '../model/category-model'
+import { Add, Delete } from '@material-ui/icons'
+import { List, Box, ListItemSecondaryAction, IconButton, Button, Divider, ListItemText, ListItem, TextField, FormControl, Theme, createStyles, makeStyles, ListSubheader } from '@material-ui/core'
+import { Autocomplete, AutocompleteRenderInputParams } from '@material-ui/lab'
 
 interface IngredientsFormProps {
   ingredients: IngredientModel[];
@@ -38,43 +37,43 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: 1
     }
   })
-);
+)
 
 export default function IngredientsForm(props: IngredientsFormProps) {
-  const classes = useStyles();
+  const classes = useStyles()
 
   const suggestions: Suggestion[] = props.categories.flatMap(category => category.ingredients.map(ingredient => ({
     title: ingredient,
     group: category.title
-  })));
+  })))
 
   const getSecondaryLine = (ingredient: IngredientModel) => {
     if (!ingredient.amount) {
-      return null;
+      return null
     }
 
-    return ingredient.unit ? `${ingredient.amount} ${ingredient.unit}` : `${ingredient.amount}`;
+    return ingredient.unit ? `${ingredient.amount} ${ingredient.unit}` : `${ingredient.amount}`
   }
 
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState('')
   const handleTitleChange = (event: React.ChangeEvent<{}>, value: string | Suggestion | null) => {
     if (typeof value === 'string') {
-      setTitle(value);
+      setTitle(value)
     } else {
-      setTitle(value?.title || '');
+      setTitle(value?.title || '')
     }
-  };
+  }
 
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState('')
   const handleAmountChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setAmount(event.target.value as string);
-  };
+    setAmount(event.target.value as string)
+  }
 
   const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    const [amountPart, unitPart] = amount.split(' ');
-    const numericAmount = +amountPart;
+    const [amountPart, unitPart] = amount.split(' ')
+    const numericAmount = +amountPart
 
     const ingredient: IngredientModel = isFinite(numericAmount)
       ? {
@@ -84,13 +83,13 @@ export default function IngredientsForm(props: IngredientsFormProps) {
       }
       : {
         title
-      };
+      }
 
-    props.onAdd(ingredient);
+    props.onAdd(ingredient)
 
-    setAmount('');
-    setTitle('');
-  };
+    setAmount('')
+    setTitle('')
+  }
 
   return (
     <form className={classes.form} id="ingredients-form" onSubmit={handleSubmit}>
@@ -98,7 +97,7 @@ export default function IngredientsForm(props: IngredientsFormProps) {
         <List className={classes.list} subheader={<ListSubheader component="div" style={{ paddingLeft: 0 }}>Ingredients</ListSubheader>}>
           {
             props.ingredients.map((ingredient, index) =>
-              <Box>
+              <Box key={ingredient.title}>
                 <Divider component="li" />
                 <ListItem key={index}>
                   <ListItemText
@@ -106,7 +105,7 @@ export default function IngredientsForm(props: IngredientsFormProps) {
                     secondary={getSecondaryLine(ingredient)}/>
                   <ListItemSecondaryAction>
                     <IconButton edge="end" aria-label="delete" onClick={() => props.onDelete(ingredient)}>
-                      <DeleteIcon fontSize="small" />
+                      <Delete fontSize="small" />
                     </IconButton>
                   </ListItemSecondaryAction>
                 </ListItem>
@@ -132,20 +131,20 @@ export default function IngredientsForm(props: IngredientsFormProps) {
         <FormControl className={classes.formControl}>
           <TextField
             size="small"
-            variant="outlined" 
+            variant="outlined"
             label="Amount"
             value={amount}
             onChange={handleAmountChange}/>
         </FormControl>
       </Box>
       <Box className={classes.box}>
-        <Button 
+        <Button
           type="submit"
           disabled={!title}
           color="primary">
-          <AddIcon /> Add ingredient
+          <Add /> Add ingredient
         </Button>
       </Box>
     </form>
-  );
+  )
 }

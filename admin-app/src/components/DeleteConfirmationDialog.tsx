@@ -1,9 +1,5 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import Dialog from '@material-ui/core/Dialog';
+import React from 'react'
+import { Button, DialogTitle, DialogContent, DialogActions, Dialog } from '@material-ui/core'
 
 export interface DeleteConfirmationDialogProps {
   open: boolean;
@@ -12,15 +8,15 @@ export interface DeleteConfirmationDialogProps {
 }
 
 export default function DeleteConfirmationDialog(props: DeleteConfirmationDialogProps) {
-  const { onConfirm, onCancel, open } = props;
+  const { onConfirm, onCancel, open } = props
 
   const handleCancel = () => {
-    onCancel();
-  };
+    onCancel()
+  }
 
   const handleOk = () => {
-    onConfirm();
-  };
+    onConfirm()
+  }
 
   return (
     <Dialog
@@ -33,5 +29,5 @@ export default function DeleteConfirmationDialog(props: DeleteConfirmationDialog
         <Button onClick={handleOk} color="secondary">Delete</Button>
       </DialogActions>
     </Dialog>
-  );
+  )
 }

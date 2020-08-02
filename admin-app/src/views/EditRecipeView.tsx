@@ -1,78 +1,78 @@
-import React, { useState } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
-import { RecipeModel } from '../model';
-import { firestore } from '../firebase';
-import { LinearProgress, Box, Container, Button, makeStyles, Theme, createStyles } from '@material-ui/core';
-import RecipeForm from '../components/RecipeForm';
-import ForbiddenError from '../components/ForbiddenError';
-import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog';
-import useCategories from '../hooks/useCategories';
-import useRecipe from '../hooks/useRecipe';
-import Error from '../components/Error';
-import useTitle from '../hooks/useTitle';
+import React, { useState } from 'react'
+import { useParams, useHistory } from 'react-router-dom'
+import { firestore } from '../firebase'
+import { LinearProgress, Box, Container, Button, makeStyles, Theme, createStyles } from '@material-ui/core'
+import RecipeForm from '../components/RecipeForm'
+import ForbiddenError from '../components/ForbiddenError'
+import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog'
+import useCategories from '../hooks/useCategories'
+import useRecipe from '../hooks/useRecipe'
+import Error from '../components/Error'
+import useTitle from '../hooks/useTitle'
+import { RecipeModel } from '../model/recipe-model'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     box: {
       padding: theme.spacing(1),
       '& > button': {
-        marginRight: theme.spacing(1),
+        marginRight: theme.spacing(1)
       }
     }
   })
-);
+)
 
 export default function EditRecipeView() {
-  const classes = useStyles();
-  const { id } = useParams();
-  const history = useHistory();
+  const classes = useStyles()
+  const { id } = useParams()
+  const history = useHistory()
 
-  const categories = useCategories();
-  const [recipe, setRecipe] = useRecipe(id);
+  const categories = useCategories()
+  const [recipe, setRecipe] = useRecipe(id)
 
-  useTitle(typeof recipe === 'object' ? recipe?.main?.title : undefined);
+  useTitle(typeof recipe === 'object' ? recipe?.main?.title : undefined)
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   const handleOnDelete = () => {
-    setOpen(true);
-  };
+    setOpen(true)
+  }
 
   const handleOnConfirm = () => {
     const deleteRecipe = async () => {
-      await firestore.collection('recipes').doc(id).delete();
+      await firestore.collection('recipes').doc(id).delete()
 
-      history.push('/');
-    };
+      history.push('/')
+    }
 
-    deleteRecipe();
-  };
+    deleteRecipe()
+  }
 
   const handleOnCancel = () => {
-    setOpen(false);
-  };
+    setOpen(false)
+  }
 
   const handleOnSave: React.FormEventHandler = (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     if (typeof recipe === 'object') {
       const saveRecipe = async () => {
-        await firestore.collection('recipes').doc(id).set(recipe, { merge: true });
+        await firestore.collection('recipes').doc(id).set(recipe, { merge: true })
 
-        history.push('/');
-      };
+        history.push('/')
+      }
 
-      saveRecipe();
+      saveRecipe()
     }
-  };
+  }
 
   switch (recipe) {
     case 'loading':
-      return (<LinearProgress />);
+      return (<LinearProgress />)
     case 'error':
-      return (<Error />);
+      return (<Error />)
     case 'forbidden':
-      return (<ForbiddenError/>);
+      return (<ForbiddenError/>)
     default:
       return (
         <Container>
@@ -104,6 +104,6 @@ export default function EditRecipeView() {
             />
           </Box>
         </Container>
-      );
+      )
   }
 }

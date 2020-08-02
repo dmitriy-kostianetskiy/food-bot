@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import MealForm from '../components/MealForm';
-import { RecipeModel, MealModel, CategoryModel } from '../model';
-import { Box, FormControl, TextField, Switch, FormControlLabel, makeStyles, Theme, createStyles } from '@material-ui/core';
-import { createMeal } from '../recipe.helper';
+import React, { useState } from 'react'
+import MealForm from '../components/MealForm'
+import { RecipeModel, MealModel, CategoryModel } from '../model'
+import { Box, FormControl, TextField, Switch, FormControlLabel, makeStyles, Theme, createStyles } from '@material-ui/core'
+import { createMeal } from '../recipe.helper'
 
 interface Props {
   recipe: RecipeModel;
@@ -21,30 +21,30 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(1)
     }
   })
-);
+)
 
 export default function RecipeForm({ categories, recipe, onChange }: Props) {
-  const classes = useStyles();
+  const classes = useStyles()
 
-  const [showSide, setShowSide] = useState(!!recipe.side);
+  const [showSide, setShowSide] = useState(!!recipe.side)
 
   const handleReadyInChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     onChange({
       ...recipe,
       readyIn: event.target.value as string
-    });
-  };
+    })
+  }
 
   const handleShowSideChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!recipe.side) {
       onChange({
         ...recipe,
         side: createMeal()
-      });
+      })
     }
 
-    setShowSide(event.target.checked);
-  };
+    setShowSide(event.target.checked)
+  }
 
   return (
     <Box className={classes.box}>
@@ -74,5 +74,5 @@ export default function RecipeForm({ categories, recipe, onChange }: Props) {
         )
       }
     </Box>
-  );
+  )
 }

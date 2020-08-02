@@ -3,5 +3,9 @@
         "esnext",
         "firestore"
     ],
-    "sort-imports.on-save": false
+    "sort-imports.on-save": false,
+    "eslint.alwaysShowStatus": true,
+    "eslint.debug": true,
+    "eslint.format.enable": true,
+    "eslint.lintTask.enable": true
 }
