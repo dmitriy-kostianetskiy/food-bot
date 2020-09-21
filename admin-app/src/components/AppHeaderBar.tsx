@@ -1,10 +1,11 @@
 
 import React, { PropsWithChildren, useState } from 'react'
 import { AppBar, Toolbar, Typography, makeStyles, Theme, createStyles, Button, Box, IconButton, Snackbar } from '@material-ui/core'
-import { Home, Add, RestaurantMenu } from '@material-ui/icons'
+import { Home, Add, RestaurantMenu, List } from '@material-ui/icons'
 import { useHistory, Link } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
 import { Alert } from '@material-ui/lab'
+import { functions } from '../firebase';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,6 +26,8 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
+const generateMenu = functions.httpsCallable('generateMenuHttps')
+
 export default function AppHeaderBar(props: PropsWithChildren<{}>) {
   const classes = useStyles()
   const history = useHistory()
@@ -44,9 +47,9 @@ export default function AppHeaderBar(props: PropsWithChildren<{}>) {
 
   const handleGenerateMenu = async () => {
     try {
-      const response = await fetch('https://europe-west3-generate-menu.cloudfunctions.net/generateMenuHttps')
+      await generateMenu()
 
-      setShowGenerateMenuToast(response.ok ? 'success' : 'error')
+      setShowGenerateMenuToast('success')
     } catch (e) {
       console.error(e)
 
@@ -62,11 +65,14 @@ export default function AppHeaderBar(props: PropsWithChildren<{}>) {
       <IconButton className={classes.menuButton} color="inherit" component={Link} to="/" title="Home">
         <Home />
       </IconButton>
-      <IconButton className={classes.menuButton} color="inherit" onClick={() => handleGenerateMenu()} title="Generate new menu">
-        <RestaurantMenu />
+      <IconButton className={classes.menuButton} color="inherit" component={Link} to="/recipes" title="All recipes">
+        <List />
       </IconButton>
       <IconButton className={classes.menuButton} color="inherit" component={Link} to="/recipe/new" title="Create new recipe">
         <Add />
+      </IconButton>
+      <IconButton className={classes.menuButton} color="inherit" onClick={() => handleGenerateMenu()} title="Generate new menu">
+        <RestaurantMenu />
       </IconButton>
       <Button color="inherit" onClick={handleLogout}>Logout</Button>
     </Box>

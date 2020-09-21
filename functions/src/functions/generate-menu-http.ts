@@ -9,7 +9,10 @@ import * as cors from 'cors'
 @Service()
 export default class GenerateMenuHttpFunctionCreator extends FunctionCreator {
   private cors = cors({
-    origin: true
+    origin: [
+      'https://generate-menu.web.app',
+      'https://generate-menu.firebaseapp.com'
+    ]
   })
 
   constructor (private messagesService: PubsubService) {
