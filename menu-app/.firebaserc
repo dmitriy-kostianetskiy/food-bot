@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "generate-menu": {
+      "hosting": {
+        "menu-app": [
+          "generate-menu"
+        ]
+      }
+    }
+  }
+}

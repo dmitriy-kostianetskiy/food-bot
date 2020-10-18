@@ -1,0 +1,19 @@
+<div *ngIf="auth.user | async as user; else signInTemplate">
+  <h1>Hello {{ user.displayName }}!</h1>
+  <button (click)="logout()">Logout</button>
+  <button (click)="linkWithGoogle()">Link with google</button>
+</div>
+
+<ng-template #signInTemplate>
+  <div *ngIf="!confirmationResult; else confirmationCodeTemplate">
+    <p>Please login.</p>
+    <input [(ngModel)]="phoneNumber" type="tel" />
+    <button id="sign-in-button" (click)="login()">Login</button>
+  </div>
+
+  <ng-template #confirmationCodeTemplate>
+    <p>Please enter the code.</p>
+    <input [(ngModel)]="verificationCode" />
+    <button (click)="verifyCode()">Send a code</button>
+  </ng-template>
+</ng-template>

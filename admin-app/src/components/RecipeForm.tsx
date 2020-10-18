@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import MealForm from '../components/MealForm'
-import { RecipeModel, MealModel, CategoryModel } from '../model'
-import { Box, FormControl, TextField, Switch, FormControlLabel, makeStyles, Theme, createStyles } from '@material-ui/core'
+import { RecipeModel, MealModel, CategoryModel, MealKind } from '../model'
+import { Box, FormControl, TextField, Switch, FormControlLabel, makeStyles, Theme, createStyles, InputLabel, Select, MenuItem } from '@material-ui/core'
 import { createMeal } from '../recipe.helper'
 
 interface Props {
@@ -35,6 +35,13 @@ export default function RecipeForm({ categories, recipe, onChange }: Props) {
     })
   }
 
+  const handleMealKindChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    onChange({
+      ...recipe,
+      mealKind: event.target.value as MealKind
+    })
+  }
+
   const handleShowSideChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!recipe.side) {
       onChange({
@@ -55,6 +62,22 @@ export default function RecipeForm({ categories, recipe, onChange }: Props) {
           label="Ready in"
           value={recipe.readyIn}
           onChange={handleReadyInChange}/>
+      </FormControl>
+      <FormControl variant="outlined" className={classes.formControl}>
+        <InputLabel id="meal-kind-label">Meal kind</InputLabel>
+        <Select
+          labelId="meal-kind-label"
+          value={recipe.mealKind}
+          onChange={handleMealKindChange}
+          label="Meal kind">
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          <MenuItem value="beef">Beef</MenuItem>
+          <MenuItem value="pork">Pork</MenuItem>
+          <MenuItem value="poultry">Poultry</MenuItem>
+          <MenuItem value="vegetarian">Vegetarian</MenuItem>
+        </Select>
       </FormControl>
       <MealForm
         meal={recipe.main}
