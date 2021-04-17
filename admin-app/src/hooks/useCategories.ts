@@ -9,8 +9,9 @@ export default function useCategories(): CategoryModel[] {
     const fetch = async () => {
       try {
         const result = await firestore.collection('categories').get()
-        const model = result.docs.map(item => item.data() as CategoryModel)
 
+        const model = result.docs.map(item => item.data() as CategoryModel)
+        console.log(model.map(x => x.title))
         setCategories(model)
       } catch (error) {
         setCategories([])
