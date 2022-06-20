@@ -1,33 +1,34 @@
-import { CloudFunction, region } from 'firebase-functions'
-import { DEFAULT_REGION, SUBSCRIPTIONS_PATH } from '../constants'
+import { CloudFunction, region } from 'firebase-functions';
 
-import { CategoryService } from '../services/category.service'
-import { FunctionCreator } from './function-creator'
-import { Menu } from '../menu'
-import { MenuService } from '../services/menu.service'
-import { PubsubService } from '../services/pubsub.service'
-import { Service } from 'typedi'
-import { Subscription } from '../model'
+import { CategoryService } from '../services/category.service';
+import { FunctionCreator } from './function-creator';
+import { Menu } from '../menu';
+import { MenuService } from '../services/menu.service';
+import { PubsubService } from '../services/pubsub.service';
+import { Service } from 'typedi';
+import { Subscription } from '../model';
+import { ConfigurationService } from '../services/configuration.service';
 
 @Service()
-export default class PublishMenuToSubscriberFunctionCreator extends FunctionCreator {
+export class PublishMenuToSubscriberFunctionCreator extends FunctionCreator {
   constructor (
-    private menuService: MenuService,
-    private categoryService: CategoryService,
-    private pubsubService: PubsubService
+    private readonly menuService: MenuService,
+    private readonly categoryService: CategoryService,
+    private readonly pubsubService: PubsubService,
+    private readonly configurationService: ConfigurationService
   ) {
-    super()
+    super();
   }
 
   createFunction(): CloudFunction<unknown> {
-    return region(DEFAULT_REGION)
+    return region(this.configurationService.functionRegion)
       .firestore
-      .document(`${SUBSCRIPTIONS_PATH}/{subscribersId}`)
+      .document(`${this.configurationService.subscriptionsPath}/{subscribersId}`)
       .onCreate(async (snapshot) => {
-        const subscription = snapshot.data() as Subscription
+        const subscription = snapshot.data() as Subscription;
 
         if (!subscription?.id) {
-          return
+          return;
         }
 
         const [
@@ -36,14 +37,14 @@ export default class PublishMenuToSubscriberFunctionCreator extends FunctionCrea
         ] = await Promise.all([
           this.menuService.fetchCurrentMenu(),
           this.categoryService.fetchAll()
-        ])
+        ]);
 
-        const menu = new Menu(menuModel, categories)
+        const menu = new Menu(menuModel, categories);
 
         await this.pubsubService.publish('bot-messages', {
           subscriberId: subscription.id,
           messages: menu.printWithCart()
-        })
-      })
+        });
+      });
   }
 }

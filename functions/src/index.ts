@@ -1,20 +1,20 @@
-import 'reflect-metadata'
+import 'reflect-metadata';
 
-import GenerateMenuFunctionCreator from './functions/generate-menu'
-import PublishMenuToAllFunctionCreator from './functions/publish-menu-to-all'
-import PublishMenuToSubscriberFunctionCreator from './functions/publish-menu-to-subscriber'
-import ScheduleGenerateMenuFunctionCreator from './functions/schedule-generate-menu'
-import TelegramBotHookFunctionCreator from './functions/telegram-bot-hook'
-import TelegramSendMessageFunctionCreator from './functions/telegram-send-message'
-import GenerateMenuHttpFunctionCreator from './functions/generate-menu-http'
-import bootstrap from './bootstrap'
+import bootstrap from './bootstrap';
+import { GenerateMenuFunctionCreator } from './functions/generate-menu';
+import { GenerateMenuHttpFunctionCreator } from './functions/generate-menu-http';
+import { PublishMenuToAllFunctionCreator } from './functions/publish-menu-to-all';
+import { PublishMenuToSubscriberFunctionCreator } from './functions/publish-menu-to-subscriber';
+import { ScheduleGenerateMenuFunctionCreator } from './functions/schedule-generate-menu';
+import { TelegramBotHookFunctionCreator } from './functions/telegram-bot-hook';
+import { TelegramSendMessageFunctionCreator } from './functions/telegram-send-message';
 
-const createFunction = bootstrap()
+const createFunction = bootstrap();
 
-export const generateMenu = createFunction(GenerateMenuFunctionCreator)
-export const generateMenuHttps = createFunction(GenerateMenuHttpFunctionCreator)
-export const publishMenuToAll = createFunction(PublishMenuToAllFunctionCreator)
-export const publishMenuToSubscriber = createFunction(PublishMenuToSubscriberFunctionCreator)
-export const scheduleGenerateMenu = createFunction(ScheduleGenerateMenuFunctionCreator)
-export const telegramBotHook = createFunction(TelegramBotHookFunctionCreator)
-export const telegramSendMessage = createFunction(TelegramSendMessageFunctionCreator)
+export const generateMenu = createFunction(GenerateMenuFunctionCreator);
+export const generateMenuHttps = createFunction(GenerateMenuHttpFunctionCreator);
+export const publishMenuToAll = createFunction(PublishMenuToAllFunctionCreator);
+export const publishMenuToSubscriber = createFunction(PublishMenuToSubscriberFunctionCreator);
+export const scheduleGenerateMenu = createFunction(ScheduleGenerateMenuFunctionCreator);
+export const telegramBotHook = createFunction(TelegramBotHookFunctionCreator);
+export const telegramSendMessage = createFunction(TelegramSendMessageFunctionCreator);

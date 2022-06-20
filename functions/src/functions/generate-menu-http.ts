@@ -1,37 +1,40 @@
-import { region, HttpsFunction } from 'firebase-functions'
+import { region, HttpsFunction } from 'firebase-functions';
 
-import { DEFAULT_REGION } from '../constants'
-import { FunctionCreator } from './function-creator'
-import { Service } from 'typedi'
-import { PubsubService } from '../services/pubsub.service'
-import * as cors from 'cors'
+import { FunctionCreator } from './function-creator';
+import { Service } from 'typedi';
+import { PubsubService } from '../services/pubsub.service';
+import * as cors from 'cors';
+import { ConfigurationService } from '../services/configuration.service';
 
 @Service()
-export default class GenerateMenuHttpFunctionCreator extends FunctionCreator {
+export class GenerateMenuHttpFunctionCreator extends FunctionCreator {
   private cors = cors({
     origin: [
       'https://generate-menu.web.app',
       'https://generate-menu.firebaseapp.com'
     ]
-  })
+  });
 
-  constructor (private messagesService: PubsubService) {
-    super()
+  constructor (
+    private readonly messagesService: PubsubService,
+    private readonly configurationService: ConfigurationService
+  ) {
+    super();
   }
 
   createFunction(): HttpsFunction {
-    return region(DEFAULT_REGION)
+    return region(this.configurationService.functionRegion)
       .https
       .onRequest(async (request, response) => this.cors(request, response, async () => {
         try {
-          await this.messagesService.publish('generate-menu')
+          await this.messagesService.publish('generate-menu');
 
-          response.status(200).send('Success!')
+          response.status(200).send('Success!');
         } catch (e) {
-          console.error(e)
+          console.error(e);
 
-          response.status(500).send('Error!')
+          response.status(500).send('Error!');
         }
-      }))
+      }));
   }
 }

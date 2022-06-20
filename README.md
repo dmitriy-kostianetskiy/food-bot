@@ -22,3 +22,11 @@ https://console.cloud.google.com/cloudpubsub/topic/detail/messages?project=gener
   "type": "generateMenu"
 }
 ```
+
+### Configuration
+
+```
+yarn firebase functions:config:set bot.token="BOT_TOKEN"
+yarn firebase functions:config:set function.region="europe-west3"
+yarn firebase functions:config:set menu.path="menu/current"
+```
