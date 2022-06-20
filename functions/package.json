@@ -40,7 +40,7 @@
     "serve": "yarn build && yarn firebase emulators:start",
     "shell": "yarn build && yarn firebase functions:shell",
     "start": "yarn shell",
-    "deploy": "yarn build && yarn firebase deploy --only functions --location=global",
+    "deploy": "yarn build && yarn firebase deploy --only functions",
     "config": "yarn firebase functions:config:set bot.key=\"BOT_TOKEN\"",
     "logs": "yarn firebase functions:log",
     "test": "yarn jest"
