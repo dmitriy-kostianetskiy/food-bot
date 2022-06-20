@@ -1,0 +1,12 @@
+# Add files here to ignore them from prettier formatting
+
+/dist
+/coverage
+/.angular
+/legacy
+/packages/desktop/installer/FastmarketsDashboard.wxs
+
+# Ignore all SCSS files until sass-lint is used in project
+# There is no sass-lint-prettier, also sass-lint is not maintained anymore.
+# It should be replaced to stylelint which is a standart tool to lint styles at the moment
+*.scss

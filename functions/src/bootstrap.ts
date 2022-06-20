@@ -7,7 +7,7 @@ import { FunctionCreator } from './functions/function-creator';
 import { PubSub } from '@google-cloud/pubsub';
 
 export type CreateFunction = (
-  type: Constructable<FunctionCreator>
+  type: Constructable<FunctionCreator>,
 ) => CloudFunction<unknown> | HttpsFunction;
 
 export default function bootstrap(): CreateFunction {
