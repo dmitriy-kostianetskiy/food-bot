@@ -11,11 +11,11 @@ export default class BotService {
 
   constructor(
     private readonly subscriptionService: SubscriptionService,
-    private readonly configurationService: ConfigurationService
+    private readonly configurationService: ConfigurationService,
   ) {
     this.bot = this.createTelegraf(
       this.configurationService.botToken,
-      this.configurationService.functionRegion
+      this.configurationService.functionRegion,
     );
 
     if (this.bot) {
@@ -65,7 +65,7 @@ export default class BotService {
       });
 
       await context.reply(
-        'Спасибо! Вы будете получать новое меню каждую пятницу в 12:00 по московскому времени 🍽'
+        'Спасибо! Вы будете получать новое меню каждую пятницу в 12:00 по московскому времени 🍽',
       );
     });
 
@@ -78,16 +78,13 @@ export default class BotService {
     });
 
     bot.catch((error, context) => {
-      console.log(
-        `Ooops, encountered an error for ${context.updateType}`,
-        error
-      );
+      console.log(`Ooops, encountered an error for ${context.updateType}`, error);
     });
 
     bot.on('text', (context) =>
       context.reply(
-        'Используйте команды /start и /stop, чтобы подписаться и отписаться от рассылки.'
-      )
+        'Используйте команды /start и /stop, чтобы подписаться и отписаться от рассылки.',
+      ),
     );
 
     return bot;

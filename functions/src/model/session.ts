@@ -1,3 +1,3 @@
 export interface Session {
-  readonly indexes: number[];
+  readonly indexes: readonly number[];
 }

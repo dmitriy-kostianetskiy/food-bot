@@ -11,19 +11,18 @@ import { ConfigurationService } from '../services/configuration.service';
 
 @Service()
 export class PublishMenuToSubscriberFunctionCreator extends FunctionCreator {
-  constructor (
+  constructor(
     private readonly menuService: MenuService,
     private readonly categoryService: CategoryService,
     private readonly pubsubService: PubsubService,
-    private readonly configurationService: ConfigurationService
+    private readonly configurationService: ConfigurationService,
   ) {
     super();
   }
 
   createFunction(): CloudFunction<unknown> {
     return region(this.configurationService.functionRegion)
-      .firestore
-      .document(`${this.configurationService.subscriptionsPath}/{subscribersId}`)
+      .firestore.document(`${this.configurationService.subscriptionsPath}/{subscribersId}`)
       .onCreate(async (snapshot) => {
         const subscription = snapshot.data() as Subscription;
 
@@ -31,19 +30,16 @@ export class PublishMenuToSubscriberFunctionCreator extends FunctionCreator {
           return;
         }
 
-        const [
-          menuModel,
-          categories
-        ] = await Promise.all([
+        const [menuModel, categories] = await Promise.all([
           this.menuService.fetchCurrentMenu(),
-          this.categoryService.fetchAll()
+          this.categoryService.fetchAll(),
         ]);
 
         const menu = new Menu(menuModel, categories);
 
         await this.pubsubService.publish('bot-messages', {
           subscriberId: subscription.id,
-          messages: menu.printWithCart()
+          messages: menu.printWithCart(),
         });
       });
   }

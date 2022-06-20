@@ -8,13 +8,13 @@ import { MenuModel } from './model/menu-model';
 export class Menu {
   readonly cart = new Cart(this.menu, this.categories);
 
-  constructor(readonly menu: MenuModel, readonly categories: CategoryModel[]) {}
+  constructor(readonly menu: MenuModel, readonly categories: readonly CategoryModel[]) {}
 
-  print(): string[] {
+  print(): readonly string[] {
     return this.menu.dinners.map((item, index) => this.printRecipe(item, index));
   }
 
-  printWithCart(): string[] {
+  printWithCart(): readonly string[] {
     return [...this.print(), this.cart.print()];
   }
 

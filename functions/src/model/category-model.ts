@@ -1,4 +1,4 @@
 export interface CategoryModel {
-  title: string;
-  ingredients: string[];
+  readonly title: string;
+  readonly ingredients: readonly string[];
 }

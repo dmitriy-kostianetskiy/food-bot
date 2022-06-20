@@ -1,14 +1,14 @@
-import { IngredientModel } from './ingredient-model'
+import { IngredientModel } from './ingredient-model';
 
 export interface RecipeModel {
-  id: string;
-  main: MealModel;
-  side?: MealModel;
-  readyIn?: string;
+  readonly id: string;
+  readonly main: MealModel;
+  readonly side?: MealModel;
+  readonly readyIn?: string;
 }
 
 export interface MealModel {
-  title: string;
-  steps: string[];
-  ingredients: IngredientModel[];
+  readonly title: string;
+  readonly steps: readonly string[];
+  readonly ingredients: readonly IngredientModel[];
 }

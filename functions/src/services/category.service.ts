@@ -7,12 +7,12 @@ import { Service } from 'typedi';
 export class CategoryService {
   constructor(private firestore: admin.firestore.Firestore) {}
 
-  async fetchAll(): Promise<CategoryModel[]> {
+  async fetchAll(): Promise<readonly CategoryModel[]> {
     const result = await this.firestore.collection('categories').get();
 
-    return result.docs.map(item => ({
+    return result.docs.map((item) => ({
       id: item.id,
-      ...item.data() as CategoryModel
+      ...(item.data() as CategoryModel),
     }));
   }
 }

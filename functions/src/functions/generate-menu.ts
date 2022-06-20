@@ -8,18 +8,17 @@ import { ConfigurationService } from '../services/configuration.service';
 
 @Service()
 export class GenerateMenuFunctionCreator extends FunctionCreator {
-  constructor (
+  constructor(
     private readonly menuGenerator: MenuGeneratorService,
     private readonly menuService: MenuService,
-    private readonly configurationService: ConfigurationService
+    private readonly configurationService: ConfigurationService,
   ) {
     super();
   }
 
   createFunction(): CloudFunction<unknown> {
     return region(this.configurationService.functionRegion)
-      .pubsub
-      .topic('generate-menu')
+      .pubsub.topic('generate-menu')
       .onPublish(async () => {
         const menu = await this.menuGenerator.generate();
 

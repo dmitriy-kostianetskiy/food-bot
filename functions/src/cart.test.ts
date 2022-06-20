@@ -1,21 +1,17 @@
-import { CategoryModel, MenuModel } from './model'
+import { CategoryModel, MenuModel } from './model';
 
-import { Cart } from './cart'
+import { Cart } from './cart';
 
-const categories: CategoryModel[] = [
+const categories: readonly CategoryModel[] = [
   {
     title: 'Овощи',
-    ingredients: [
-      'Морковь'
-    ]
+    ingredients: ['Морковь'],
   },
   {
     title: 'Фрукты',
-    ingredients: [
-      'Яблоко'
-    ]
-  }
-]
+    ingredients: ['Яблоко'],
+  },
+];
 
 test('should place apples and carrots into fruits and vegetables categories accordingly', () => {
   const menu: MenuModel = {
@@ -27,31 +23,31 @@ test('should place apples and carrots into fruits and vegetables categories acco
             {
               title: 'Морковь',
               amount: 1,
-              unit: 'кг'
+              unit: 'кг',
             },
             {
               title: 'Яблоко',
               amount: 2,
-              unit: 'шт'
-            }
+              unit: 'шт',
+            },
           ],
           steps: [],
-          title: 'Meal'
-        }
-      }
-    ]
-  }
+          title: 'Meal',
+        },
+      },
+    ],
+  };
 
-  const cart = new Cart(menu, categories)
+  const cart = new Cart(menu, categories);
 
   expect(cart.print()).toBe(
-`🛒 <b>Список покупок:</b>
+    `🛒 <b>Список покупок:</b>
 <b>Овощи</b>
  - Морковь - 1 кг (1)
 <b>Фрукты</b>
- - Яблоко - 2 шт (1)`
-  )
-})
+ - Яблоко - 2 шт (1)`,
+  );
+});
 
 test('should set indexes and sum up weight accordingly', () => {
   const menu: MenuModel = {
@@ -63,17 +59,17 @@ test('should set indexes and sum up weight accordingly', () => {
             {
               title: 'Морковь',
               amount: 1,
-              unit: 'кг'
+              unit: 'кг',
             },
             {
               title: 'Яблоко',
               amount: 2,
-              unit: 'шт'
-            }
+              unit: 'шт',
+            },
           ],
           steps: [],
-          title: 'Meal'
-        }
+          title: 'Meal',
+        },
       },
       {
         id: 'meal-2-id',
@@ -82,31 +78,31 @@ test('should set indexes and sum up weight accordingly', () => {
             {
               title: 'Морковь',
               amount: 3,
-              unit: 'кг'
+              unit: 'кг',
             },
             {
               title: 'Яблоко',
               amount: 3,
-              unit: 'шт'
-            }
+              unit: 'шт',
+            },
           ],
           steps: [],
-          title: 'Meal'
-        }
-      }
-    ]
-  }
+          title: 'Meal',
+        },
+      },
+    ],
+  };
 
-  const cart = new Cart(menu, categories)
+  const cart = new Cart(menu, categories);
 
   expect(cart.print()).toBe(
-`🛒 <b>Список покупок:</b>
+    `🛒 <b>Список покупок:</b>
 <b>Овощи</b>
  - Морковь - 4 кг (1, 2)
 <b>Фрукты</b>
- - Яблоко - 5 шт (1, 2)`
-  )
-})
+ - Яблоко - 5 шт (1, 2)`,
+  );
+});
 
 test('should not display unit of measure', () => {
   const menu: MenuModel = {
@@ -116,21 +112,21 @@ test('should not display unit of measure', () => {
         main: {
           ingredients: [
             {
-              title: 'Соль'
-            }
+              title: 'Соль',
+            },
           ],
           steps: [],
-          title: 'Meal'
-        }
-      }
-    ]
-  }
+          title: 'Meal',
+        },
+      },
+    ],
+  };
 
-  const cart = new Cart(menu, categories)
+  const cart = new Cart(menu, categories);
 
   expect(cart.print()).toBe(
-`🛒 <b>Список покупок:</b>
+    `🛒 <b>Список покупок:</b>
 <b>Другое</b>
- - Соль (1)`
-  )
-})
+ - Соль (1)`,
+  );
+});

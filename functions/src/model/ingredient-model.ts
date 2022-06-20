@@ -1,5 +1,5 @@
 export interface IngredientModel {
-  title: string;
-  amount?: number;
-  unit?: string;
+  readonly title: string;
+  readonly amount?: number;
+  readonly unit?: string;
 }

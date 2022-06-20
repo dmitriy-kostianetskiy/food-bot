@@ -7,17 +7,16 @@ import { ConfigurationService } from '../services/configuration.service';
 
 @Service()
 export class TelegramBotHookFunctionCreator extends FunctionCreator {
-  constructor (
+  constructor(
     private readonly botService: BotService,
-    private readonly configurationService: ConfigurationService
+    private readonly configurationService: ConfigurationService,
   ) {
     super();
   }
 
   createFunction(): HttpsFunction {
-    return region(this.configurationService.functionRegion)
-      .https
-      .onRequest(async (request, response) => {
+    return region(this.configurationService.functionRegion).https.onRequest(
+      async (request, response) => {
         try {
           console.log('Incoming request', JSON.stringify(request.body));
 
@@ -25,6 +24,7 @@ export class TelegramBotHookFunctionCreator extends FunctionCreator {
         } finally {
           response.status(200).send();
         }
-      });
+      },
+    );
   }
 }
