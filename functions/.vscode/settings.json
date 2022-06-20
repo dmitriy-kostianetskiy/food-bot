@@ -1,14 +1,20 @@
 {
-    "cSpell.words": [
-        "Igredients",
-        "cetegory",
-        "firestore",
-        "typedi"
-    ],
-    "eslint.enable": true,
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true
-    },
-    "eslint.validate": ["typescript"],
-    "javascript.validate.enable": false
+  "cSpell.words": [
+    "Igredients",
+    "cetegory",
+    "firestore",
+    "typedi"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.enable": true,
+  "eslint.packageManager": "yarn",
+  "javascript.validate.enable": false,
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "eslint.debug": true,
 }
