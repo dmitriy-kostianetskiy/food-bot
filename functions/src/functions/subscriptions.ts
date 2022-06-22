@@ -3,12 +3,12 @@ import { FunctionCreator } from './function-creator';
 import { Service } from 'typedi';
 import { SubscriptionTopicMessage } from '../model/pubsub';
 import { SubscriptionService } from '../services/subscription.service';
-import { TelegramService } from '../services/telegram.service';
+import { PubsubService } from '../services/pubsub.service';
 
 @Service()
 export class SubscriptionsFunctionCreator extends FunctionCreator {
   constructor(
-    private readonly telegramService: TelegramService,
+    private readonly pubsubService: PubsubService,
     private readonly subscriptionService: SubscriptionService,
   ) {
     super();
@@ -43,15 +43,20 @@ export class SubscriptionsFunctionCreator extends FunctionCreator {
       id,
     });
 
-    await this.telegramService.sendText(
-      id,
-      'Спасибо! Вы будете получать новое меню каждую пятницу в 12:00 по московскому времени 🍽',
-    );
+    this.pubsubService.publish('bot-messages', {
+      messages: [
+        'Спасибо! Вы будете получать новое меню каждую пятницу в 12:00 по московскому времени 🍽',
+      ],
+      subscriberId: id,
+    });
   }
 
   private async removeSubscription(id: string): Promise<void> {
     await this.subscriptionService.deleteSubscription(id);
 
-    await this.telegramService.sendText(id, 'Нам очень жаль, что Вы нас покидаете 😿');
+    this.pubsubService.publish('bot-messages', {
+      messages: ['Нам очень жаль, что Вы нас покидаете 😿'],
+      subscriberId: id,
+    });
   }
 }

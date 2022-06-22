@@ -13,7 +13,8 @@
     "types": [
       "node",
       "jest"
-    ]
+    ],
+    "strictNullChecks": true
   },
   "include": [
     "src"
