@@ -2,18 +2,17 @@ import * as admin from 'firebase-admin';
 
 import { Service } from 'typedi';
 import { Subscription } from '../model';
-import { ConfigurationService } from './configuration.service';
 
 @Service()
 export class SubscriptionService {
-  constructor(
-    private readonly firestore: admin.firestore.Firestore,
-    private readonly configurationService: ConfigurationService,
-  ) {}
+  static readonly subscriptionsPath = 'subscriptions';
+  static readonly specificSubscriptionPath = 'subscriptions/{subscribersId}';
+
+  constructor(private readonly firestore: admin.firestore.Firestore) {}
 
   async fetchAll(): Promise<readonly Subscription[]> {
     const subscribersCollection = await this.firestore
-      .collection(this.configurationService.subscriptionsPath)
+      .collection(SubscriptionService.subscriptionsPath)
       .get();
 
     return subscribersCollection.docs.map((document) => document.data() as Subscription);
@@ -21,12 +20,12 @@ export class SubscriptionService {
 
   async addSubscription(subscription: Subscription): Promise<void> {
     await this.firestore
-      .collection(this.configurationService.subscriptionsPath)
+      .collection(SubscriptionService.subscriptionsPath)
       .doc(subscription.id)
       .set(subscription);
   }
 
   async deleteSubscription(id: string): Promise<void> {
-    await this.firestore.collection(this.configurationService.subscriptionsPath).doc(id).delete();
+    await this.firestore.collection(SubscriptionService.subscriptionsPath).doc(id).delete();
   }
 }

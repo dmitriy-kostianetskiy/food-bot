@@ -5,3 +5,4 @@ export * from './session';
 export * from './subscription';
 export * from './menu-model';
 export * from './configuration';
+export * from './pubsub';

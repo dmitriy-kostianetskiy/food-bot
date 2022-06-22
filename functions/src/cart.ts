@@ -17,7 +17,7 @@ export class Cart {
   private readonly ingredients: _.Dictionary<readonly CartIngredient[]>;
 
   constructor(private menu: MenuModel, private categories: readonly CategoryModel[]) {
-    this.ingredients = this.getCartIgredients();
+    this.ingredients = this.getCartIngredients();
   }
 
   print(): string {
@@ -59,7 +59,7 @@ export class Cart {
       .join('\n');
   }
 
-  private getCartIgredients(): _.Dictionary<readonly CartIngredient[]> {
+  private getCartIngredients(): _.Dictionary<readonly CartIngredient[]> {
     const mapping = _(this.categories)
       .flatMap((item) =>
         item.ingredients.map((title) => ({

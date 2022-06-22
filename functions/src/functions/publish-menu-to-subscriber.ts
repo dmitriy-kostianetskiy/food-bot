@@ -1,28 +1,28 @@
-import { CloudFunction, region } from 'firebase-functions';
+import { CloudFunction, firestore } from 'firebase-functions';
 
 import { CategoryService } from '../services/category.service';
 import { FunctionCreator } from './function-creator';
-import { Menu } from '../menu';
 import { MenuService } from '../services/menu.service';
 import { PubsubService } from '../services/pubsub.service';
 import { Service } from 'typedi';
 import { Subscription } from '../model';
-import { ConfigurationService } from '../services/configuration.service';
+import { MenuPrinterService } from '../services/menu-printer.service';
+import { SubscriptionService } from '../services/subscription.service';
 
 @Service()
 export class PublishMenuToSubscriberFunctionCreator extends FunctionCreator {
   constructor(
     private readonly menuService: MenuService,
     private readonly categoryService: CategoryService,
+    private readonly menuPrinterService: MenuPrinterService,
     private readonly pubsubService: PubsubService,
-    private readonly configurationService: ConfigurationService,
   ) {
     super();
   }
 
   createFunction(): CloudFunction<unknown> {
-    return region(this.configurationService.functionRegion)
-      .firestore.document(`${this.configurationService.subscriptionsPath}/{subscribersId}`)
+    return firestore
+      .document(SubscriptionService.specificSubscriptionPath)
       .onCreate(async (snapshot) => {
         const subscription = snapshot.data() as Subscription;
 
@@ -35,11 +35,11 @@ export class PublishMenuToSubscriberFunctionCreator extends FunctionCreator {
           this.categoryService.fetchAll(),
         ]);
 
-        const menu = new Menu(menuModel, categories);
+        const messages = this.menuPrinterService.printMenuWithCart(menuModel, categories);
 
         await this.pubsubService.publish('bot-messages', {
           subscriberId: subscription.id,
-          messages: menu.printWithCart(),
+          messages,
         });
       });
   }

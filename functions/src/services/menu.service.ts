@@ -2,22 +2,24 @@ import * as admin from 'firebase-admin';
 
 import { MenuModel } from '../model/menu-model';
 import { Service } from 'typedi';
-import { ConfigurationService } from '../services/configuration.service';
 
 @Service()
 export class MenuService {
-  constructor(
-    private readonly firestore: admin.firestore.Firestore,
-    private readonly configurationService: ConfigurationService
-  ) {}
+  static readonly currentMenuPath = 'menu/current';
+
+  constructor(private readonly firestore: admin.firestore.Firestore) {}
 
   async fetchCurrentMenu(): Promise<MenuModel | undefined> {
-    const menuDocument = await this.firestore.doc(this.configurationService.menuPath).get();
+    const menuDocument = await this.firestore.doc(MenuService.currentMenuPath).get();
 
-    return menuDocument.data() as MenuModel;
+    if (menuDocument.exists) {
+      return menuDocument.data() as MenuModel;
+    }
+
+    return undefined;
   }
 
   async replaceCurrentMenu(menu: MenuModel): Promise<void> {
-    await this.firestore.doc(this.configurationService.menuPath).set(menu);
+    await this.firestore.doc(MenuService.currentMenuPath).set(menu);
   }
 }

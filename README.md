@@ -30,3 +30,9 @@ yarn firebase functions:config:set bot.token="BOT_TOKEN"
 yarn firebase functions:config:set function.region="europe-west3"
 yarn firebase functions:config:set menu.path="menu/current"
 ```
+
+### Debugging
+
+```
+firebase emulators:start
+```

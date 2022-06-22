@@ -15,7 +15,6 @@
       "jest"
     ]
   },
-  "strictNullChecks": true,
   "include": [
     "src"
   ]

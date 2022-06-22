@@ -1,30 +1,24 @@
-import { HttpsFunction, region } from 'firebase-functions';
+import { HttpsFunction, https } from 'firebase-functions';
 
-import BotService from '../services/bot.service';
 import { FunctionCreator } from './function-creator';
 import { Service } from 'typedi';
-import { ConfigurationService } from '../services/configuration.service';
+import { TelegramService } from '../services/telegram.service';
 
 @Service()
 export class TelegramBotHookFunctionCreator extends FunctionCreator {
-  constructor(
-    private readonly botService: BotService,
-    private readonly configurationService: ConfigurationService,
-  ) {
+  constructor(private readonly telegramService: TelegramService) {
     super();
   }
 
   createFunction(): HttpsFunction {
-    return region(this.configurationService.functionRegion).https.onRequest(
-      async (request, response) => {
-        try {
-          console.log('Incoming request', JSON.stringify(request.body));
+    return https.onRequest(async (request, response) => {
+      try {
+        console.log('Incoming request', JSON.stringify(request.body));
 
-          await this.botService.handleRequest(request.body, response);
-        } finally {
-          response.status(200).send();
-        }
-      },
-    );
+        await this.telegramService.handleRequest(request.body, response);
+      } finally {
+        response.status(200).send();
+      }
+    });
   }
 }

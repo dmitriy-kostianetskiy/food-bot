@@ -1,10 +1,9 @@
-import { region, HttpsFunction } from 'firebase-functions';
+import { https, HttpsFunction } from 'firebase-functions';
 
 import { FunctionCreator } from './function-creator';
 import { Service } from 'typedi';
 import { PubsubService } from '../services/pubsub.service';
 import * as cors from 'cors';
-import { ConfigurationService } from '../services/configuration.service';
 
 @Service()
 export class GenerateMenuHttpFunctionCreator extends FunctionCreator {
@@ -12,27 +11,23 @@ export class GenerateMenuHttpFunctionCreator extends FunctionCreator {
     origin: ['https://generate-menu.web.app', 'https://generate-menu.firebaseapp.com'],
   });
 
-  constructor(
-    private readonly messagesService: PubsubService,
-    private readonly configurationService: ConfigurationService,
-  ) {
+  constructor(private readonly messagesService: PubsubService) {
     super();
   }
 
   createFunction(): HttpsFunction {
-    return region(this.configurationService.functionRegion).https.onRequest(
-      async (request, response) =>
-        this.cors(request, response, async () => {
-          try {
-            await this.messagesService.publish('generate-menu');
+    return https.onRequest(async (request, response) =>
+      this.cors(request, response, async () => {
+        try {
+          await this.messagesService.publish('generate-menu');
 
-            response.status(200).send('Success!');
-          } catch (e) {
-            console.error(e);
+          response.status(200).send('Success!');
+        } catch (e) {
+          console.error(e);
 
-            response.status(500).send('Error!');
-          }
-        }),
+          response.status(500).send('Error!');
+        }
+      }),
     );
   }
 }

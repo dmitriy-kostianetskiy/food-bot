@@ -5,6 +5,7 @@ import { Container, Constructable } from 'typedi';
 
 import { FunctionCreator } from './functions/function-creator';
 import { PubSub } from '@google-cloud/pubsub';
+import { BotService } from './services/bot.service';
 
 export type CreateFunction = (
   type: Constructable<FunctionCreator>,
@@ -17,6 +18,8 @@ export default function bootstrap(): CreateFunction {
 
   Container.set(admin.firestore.Firestore, admin.firestore());
   Container.set(PubSub, new PubSub());
+
+  Container.get(BotService).configureCommands();
 
   return (type) => Container.get<FunctionCreator>(type).createFunction();
 }
