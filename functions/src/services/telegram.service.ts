@@ -33,12 +33,12 @@ export class TelegramService {
   //   }
   // }
 
-  async sendHtml(subscriberId: string, html: string): Promise<void> {
-    await this.telegram.sendMessage(subscriberId, html, { parse_mode: 'HTML' });
+  async sendHtml(chatId: string, html: string): Promise<void> {
+    await this.telegram.sendMessage(chatId, html, { parse_mode: 'HTML' });
   }
 
-  async sendText(subscriberId: string, text: string): Promise<void> {
-    await this.telegram.sendMessage(subscriberId, text);
+  async sendText(chatId: string, text: string): Promise<void> {
+    await this.telegram.sendMessage(chatId, text);
   }
 
   async handleRequest(body: Update, response: ServerResponse): Promise<void> {

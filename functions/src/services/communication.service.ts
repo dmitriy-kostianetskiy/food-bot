@@ -5,14 +5,14 @@ import { PubsubService } from './pubsub.service';
 export class CommunicationService {
   constructor(private readonly pubsubService: PubsubService) {}
 
-  async sendMessage(subscriberId: string, ...messages: string[]): Promise<void> {
-    await this.pubsubService.publish('bot-messages', {
-      subscriberId,
+  async sendMessage(chatId: string, ...messages: string[]): Promise<void> {
+    await this.pubsubService.publish('telegram-bot-messages', {
+      chatId: chatId,
       messages,
     });
   }
 
-  async sendErrorMessage(subscriberId: string): Promise<void> {
-    await this.sendMessage(subscriberId, 'Что-то пошло не так!');
+  async sendErrorMessage(chatId: string): Promise<void> {
+    await this.sendMessage(chatId, 'Что-то пошло не так!');
   }
 }

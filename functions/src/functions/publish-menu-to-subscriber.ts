@@ -21,21 +21,17 @@ export class PublishMenuToSubscriberFunctionCreator extends FunctionCreator {
       .document(SubscriptionService.specificSubscriptionPath)
       .onCreate(async (snapshot) => {
         const subscription = snapshot.data() as Subscription;
-        const subscriberId = subscription?.id;
-
-        if (!subscriberId) {
-          return;
-        }
+        const chatId = subscription.id;
 
         try {
           const menu = await this.menuService.load();
           const messages = menu.printWithCart();
 
-          await this.communicationService.sendMessage(subscriberId, ...messages);
+          await this.communicationService.sendMessage(chatId, ...messages);
         } catch (error) {
           // TODO: error handling
           console.error(error);
-          await this.communicationService.sendErrorMessage(subscriberId);
+          await this.communicationService.sendErrorMessage(chatId);
         }
       });
   }

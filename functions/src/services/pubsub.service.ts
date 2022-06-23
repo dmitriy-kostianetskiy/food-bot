@@ -1,13 +1,11 @@
 import { PubSub } from '@google-cloud/pubsub';
 import { Service } from 'typedi';
-import { SubscriptionTopicMessage } from '../model/pubsub';
+import {
+  BotMessagingTopicMessage as TelegramBotMessagingTopicMessage,
+  SubscriptionTopicMessage,
+} from '../model/pubsub';
 
-export type Topic = 'bot-messages' | 'generate-menu' | 'subscriptions';
-
-export interface BotMessage {
-  readonly subscriberId: string;
-  readonly messages: readonly string[];
-}
+export type Topic = 'telegram-bot-messages' | 'generate-menu' | 'subscriptions';
 
 @Service()
 export class PubsubService {
@@ -15,7 +13,10 @@ export class PubsubService {
 
   async publish(topic: 'generate-menu'): Promise<void>;
   async publish(topic: 'subscriptions', message: SubscriptionTopicMessage): Promise<void>;
-  async publish(topic: 'bot-messages', message: BotMessage): Promise<void>;
+  async publish(
+    topic: 'telegram-bot-messages',
+    message: TelegramBotMessagingTopicMessage,
+  ): Promise<void>;
   async publish(topic: Topic, message?: object): Promise<void> {
     // TODO: replace publishJSON
     await this.pubsub.topic(topic).publishJSON(message || {});
