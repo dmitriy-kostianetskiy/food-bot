@@ -2,7 +2,7 @@ import { Change, CloudFunction, firestore } from 'firebase-functions';
 
 import { FunctionCreator } from './function-creator';
 import { Service } from 'typedi';
-import { SubscriptionRepository } from '../services/subscription.service';
+import { SubscriptionRepository } from '../repositories/subscription.repository';
 import { MenuService } from '../services/menu.service';
 import { MenuRepository } from '../repositories/menu.repository';
 import { CommunicationService } from '../services/communication.service';
@@ -13,7 +13,7 @@ export class PublishMenuToAllFunctionCreator extends FunctionCreator {
   constructor(
     private readonly menuService: MenuService,
     private readonly communicationService: CommunicationService,
-    private readonly subscriptionService: SubscriptionRepository,
+    private readonly subscriptionRepository: SubscriptionRepository,
   ) {
     super();
   }
@@ -22,7 +22,7 @@ export class PublishMenuToAllFunctionCreator extends FunctionCreator {
     return firestore.document(MenuRepository.currentMenuPath).onWrite(async () => {
       try {
         // TODO: think of scaling
-        const subscriptions = await this.subscriptionService.fetchAll();
+        const subscriptions = await this.subscriptionRepository.fetchAll();
 
         await this.handleSubscriptions(subscriptions);
       } catch (error) {

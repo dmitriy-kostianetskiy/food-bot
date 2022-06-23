@@ -1,31 +1,28 @@
-import * as admin from 'firebase-admin';
-
 import { Service } from 'typedi';
-import { Subscription } from '../model';
+import { SubscriptionRepository } from '../repositories/subscription.repository';
+import { CommunicationService } from './communication.service';
 
 @Service()
-export class SubscriptionRepository {
-  static readonly subscriptionsPath = 'subscriptions';
-  static readonly specificSubscriptionPath = 'subscriptions/{subscribersId}';
+export class SubscriptionService {
+  constructor(
+    private readonly subscriptionRepository: SubscriptionRepository,
+    private readonly communicationService: CommunicationService,
+  ) {}
 
-  constructor(private readonly firestore: admin.firestore.Firestore) {}
+  async addSubscription(id: string): Promise<void> {
+    await this.subscriptionRepository.addSubscription({
+      id,
+    });
 
-  async fetchAll(): Promise<readonly Subscription[]> {
-    const subscribersCollection = await this.firestore
-      .collection(SubscriptionRepository.subscriptionsPath)
-      .get();
-
-    return subscribersCollection.docs.map((document) => document.data() as Subscription);
+    this.communicationService.sendMessage(
+      id,
+      'Спасибо! Вы будете получать новое меню каждую пятницу в 12:00 по московскому времени 🍽',
+    );
   }
 
-  async addSubscription(subscription: Subscription): Promise<void> {
-    await this.firestore
-      .collection(SubscriptionRepository.subscriptionsPath)
-      .doc(subscription.id)
-      .set(subscription);
-  }
+  async removeSubscription(id: string): Promise<void> {
+    await this.subscriptionRepository.deleteSubscription(id);
 
-  async deleteSubscription(id: string): Promise<void> {
-    await this.firestore.collection(SubscriptionRepository.subscriptionsPath).doc(id).delete();
+    this.communicationService.sendMessage(id, 'Нам очень жаль, что Вы нас покидаете 😿');
   }
 }

@@ -3,7 +3,7 @@ import { CloudFunction, firestore } from 'firebase-functions';
 import { FunctionCreator } from './function-creator';
 import { Service } from 'typedi';
 import { Subscription } from '../model';
-import { SubscriptionRepository } from '../services/subscription.service';
+import { SubscriptionRepository } from '../repositories/subscription.repository';
 import { MenuService } from '../services/menu.service';
 import { CommunicationService } from '../services/communication.service';
 
