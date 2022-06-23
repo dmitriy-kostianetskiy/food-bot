@@ -1,25 +1,31 @@
-import * as admin from 'firebase-admin';
-
-import { MenuModel } from '../model/menu-model';
 import { Service } from 'typedi';
+import { Menu } from '../menu';
+import { CategoryRepository } from '../repositories/category.repository';
+import { MenuRepository } from '../repositories/menu.repository';
+import { MenuGeneratorService } from './menu-generator.service';
 
 @Service()
 export class MenuService {
   static readonly currentMenuPath = 'menu/current';
 
-  constructor(private readonly firestore: admin.firestore.Firestore) {}
+  constructor(
+    private readonly menuRepository: MenuRepository,
+    private readonly categoryRepository: CategoryRepository,
+    private readonly menuGenerator: MenuGeneratorService,
+  ) {}
 
-  async fetchCurrentMenu(): Promise<MenuModel | undefined> {
-    const menuDocument = await this.firestore.doc(MenuService.currentMenuPath).get();
+  async load(): Promise<Menu> {
+    const [menuModel, categoryModels] = await Promise.all([
+      this.menuRepository.fetchCurrentMenu(),
+      this.categoryRepository.fetchAll(),
+    ]);
 
-    if (menuDocument.exists) {
-      return menuDocument.data() as MenuModel;
-    }
-
-    return undefined;
+    return new Menu(menuModel, categoryModels);
   }
 
-  async replaceCurrentMenu(menu: MenuModel): Promise<void> {
-    await this.firestore.doc(MenuService.currentMenuPath).set(menu);
+  async generateNew(): Promise<void> {
+    const menu = await this.menuGenerator.generate();
+
+    await this.menuRepository.replaceCurrentMenu(menu);
   }
 }

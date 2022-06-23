@@ -11,7 +11,7 @@ export class GenerateMenuHttpFunctionCreator extends FunctionCreator {
     origin: ['https://generate-menu.web.app', 'https://generate-menu.firebaseapp.com'],
   });
 
-  constructor(private readonly messagesService: PubsubService) {
+  constructor(private readonly pubsubService: PubsubService) {
     super();
   }
 
@@ -19,7 +19,7 @@ export class GenerateMenuHttpFunctionCreator extends FunctionCreator {
     return https.onRequest(async (request, response) =>
       this.cors(request, response, async () => {
         try {
-          await this.messagesService.publish('generate-menu');
+          await this.pubsubService.publish('generate-menu');
 
           response.status(200).send('Success!');
         } catch (e) {

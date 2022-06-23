@@ -1,21 +1,17 @@
 import { CloudFunction, firestore } from 'firebase-functions';
 
-import { CategoryService } from '../services/category.service';
 import { FunctionCreator } from './function-creator';
-import { MenuService } from '../services/menu.service';
-import { PubsubService } from '../services/pubsub.service';
 import { Service } from 'typedi';
 import { Subscription } from '../model';
-import { MenuPrinterService } from '../services/menu-printer.service';
 import { SubscriptionService } from '../services/subscription.service';
+import { MenuService } from '../services/menu.service';
+import { CommunicationService } from '../services/communication.service';
 
 @Service()
 export class PublishMenuToSubscriberFunctionCreator extends FunctionCreator {
   constructor(
     private readonly menuService: MenuService,
-    private readonly categoryService: CategoryService,
-    private readonly menuPrinterService: MenuPrinterService,
-    private readonly pubsubService: PubsubService,
+    private readonly communicationService: CommunicationService,
   ) {
     super();
   }
@@ -25,22 +21,22 @@ export class PublishMenuToSubscriberFunctionCreator extends FunctionCreator {
       .document(SubscriptionService.specificSubscriptionPath)
       .onCreate(async (snapshot) => {
         const subscription = snapshot.data() as Subscription;
+        const subscriberId = subscription?.id;
 
-        if (!subscription?.id) {
+        if (!subscriberId) {
           return;
         }
 
-        const [menuModel, categories] = await Promise.all([
-          this.menuService.fetchCurrentMenu(),
-          this.categoryService.fetchAll(),
-        ]);
+        try {
+          const menu = await this.menuService.load();
+          const messages = menu.printWithCart();
 
-        const messages = this.menuPrinterService.printMenuWithCart(menuModel, categories);
-
-        await this.pubsubService.publish('bot-messages', {
-          subscriberId: subscription.id,
-          messages,
-        });
+          await this.communicationService.sendMessage(subscriberId, ...messages);
+        } catch (error) {
+          // TODO: error handling
+          console.error(error);
+          await this.communicationService.sendErrorMessage(subscriberId);
+        }
       });
   }
 }

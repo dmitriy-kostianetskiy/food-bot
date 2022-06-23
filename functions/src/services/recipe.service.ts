@@ -11,8 +11,8 @@ export default class RecipeService {
     const result = await this.firestore.collection('recipes').get();
 
     return result.docs.map((item) => ({
-      id: item.id,
       ...(item.data() as RecipeModel),
+      id: item.id,
     }));
   }
 }

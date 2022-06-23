@@ -3,18 +3,18 @@ import { FunctionCreator } from './function-creator';
 import { Service } from 'typedi';
 import { SubscriptionTopicMessage } from '../model/pubsub';
 import { SubscriptionService } from '../services/subscription.service';
-import { PubsubService } from '../services/pubsub.service';
+import { CommunicationService } from '../services/communication.service';
 
 @Service()
 export class SubscriptionsFunctionCreator extends FunctionCreator {
   constructor(
-    private readonly pubsubService: PubsubService,
+    private readonly communicationService: CommunicationService,
     private readonly subscriptionService: SubscriptionService,
   ) {
     super();
   }
 
-  createFunction(): CloudFunction<unknown> {
+  createFunction(): CloudFunction<pubsub.Message> {
     return pubsub.topic('subscriptions').onPublish(async (message) => {
       const jsonMessage = message.json as SubscriptionTopicMessage;
 
@@ -43,20 +43,15 @@ export class SubscriptionsFunctionCreator extends FunctionCreator {
       id,
     });
 
-    this.pubsubService.publish('bot-messages', {
-      messages: [
-        'Спасибо! Вы будете получать новое меню каждую пятницу в 12:00 по московскому времени 🍽',
-      ],
-      subscriberId: id,
-    });
+    this.communicationService.sendMessage(
+      id,
+      'Спасибо! Вы будете получать новое меню каждую пятницу в 12:00 по московскому времени 🍽',
+    );
   }
 
   private async removeSubscription(id: string): Promise<void> {
     await this.subscriptionService.deleteSubscription(id);
 
-    this.pubsubService.publish('bot-messages', {
-      messages: ['Нам очень жаль, что Вы нас покидаете 😿'],
-      subscriberId: id,
-    });
+    this.communicationService.sendMessage(id, 'Нам очень жаль, что Вы нас покидаете 😿');
   }
 }
