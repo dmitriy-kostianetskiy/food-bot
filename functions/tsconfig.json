@@ -14,7 +14,7 @@
       "node",
       "jest"
     ],
-    "strictNullChecks": true
+    "strict": true
   },
   "include": [
     "src"

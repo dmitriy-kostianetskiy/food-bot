@@ -9,7 +9,7 @@ export interface CartIngredient {
   readonly byMeals: {
     readonly index: number;
     readonly amount: number;
-    readonly unit: string;
+    readonly unit?: string;
   }[];
 }
 
@@ -30,8 +30,8 @@ export class Cart {
     return `🛒 <b>Список покупок:</b>${ingredients}`;
   }
 
-  private printCartIngredients(igredients: readonly CartIngredient[]): string {
-    return _(igredients)
+  private printCartIngredients(ingredients: readonly CartIngredient[]): string {
+    return _(ingredients)
       .map((value) => {
         const amount = _(value.byMeals)
           .groupBy((item) => item.unit)
@@ -73,23 +73,23 @@ export class Cart {
 
     return _(this.getAllIngredients())
       .groupBy((item) => item.ingredient.title)
-      .map((group, groupKey) => {
+      .map<CartIngredient>((group, groupKey) => {
         return {
           name: groupKey,
           byMeals: group.map((item) => ({
             index: item.index,
-            amount: item.ingredient.amount,
+            amount: item.ingredient.amount || 0,
             unit: item.ingredient.unit,
           })),
         };
       })
-      .reduce((acc, item) => {
-        const cetegory = mapping[item.name] || 'Другое';
-        if (!acc[cetegory]) {
-          acc[cetegory] = [];
+      .reduce<_.Dictionary<CartIngredient[]>>((acc, item) => {
+        const category = mapping[item.name] || 'Другое';
+        if (!acc[category]) {
+          acc[category] = [];
         }
 
-        acc[cetegory].push(item);
+        acc[category].push(item);
 
         return acc;
       }, {});

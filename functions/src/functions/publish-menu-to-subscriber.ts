@@ -16,7 +16,7 @@ export class PublishMenuToSubscriberFunctionCreator extends FunctionCreator {
     super();
   }
 
-  createFunction(): CloudFunction<unknown> {
+  createFunction(): CloudFunction<firestore.QueryDocumentSnapshot> {
     return firestore
       .document(SubscriptionService.specificSubscriptionPath)
       .onCreate(async (snapshot) => {

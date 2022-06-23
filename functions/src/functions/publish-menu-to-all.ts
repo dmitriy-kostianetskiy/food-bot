@@ -1,4 +1,4 @@
-import { CloudFunction, firestore } from 'firebase-functions';
+import { Change, CloudFunction, firestore } from 'firebase-functions';
 
 import { FunctionCreator } from './function-creator';
 import { Service } from 'typedi';
@@ -18,7 +18,7 @@ export class PublishMenuToAllFunctionCreator extends FunctionCreator {
     super();
   }
 
-  createFunction(): CloudFunction<unknown> {
+  createFunction(): CloudFunction<Change<firestore.DocumentSnapshot>> {
     return firestore.document(MenuRepository.currentMenuPath).onWrite(async () => {
       try {
         // TODO: think of scaling

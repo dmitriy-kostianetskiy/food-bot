@@ -10,7 +10,7 @@ export class GenerateMenuFunctionCreator extends FunctionCreator {
     super();
   }
 
-  createFunction(): CloudFunction<unknown> {
+  createFunction(): CloudFunction<pubsub.Message> {
     return pubsub.topic('generate-menu').onPublish(async () => {
       await this.menuService.generateNew();
     });
