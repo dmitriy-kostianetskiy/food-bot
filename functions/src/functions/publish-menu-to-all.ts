@@ -41,12 +41,11 @@ export class PublishMenuToAllFunctionCreator extends FunctionCreator {
         subscriptions.map(({ id }) => this.communicationService.sendMessage(id, ...messages)),
       );
     } catch (error) {
-      // TODO: error handling
-      console.error(error);
-
       await Promise.all(
         subscriptions.map(({ id }) => this.communicationService.sendErrorMessage(id)),
       );
+
+      throw error;
     }
   }
 }

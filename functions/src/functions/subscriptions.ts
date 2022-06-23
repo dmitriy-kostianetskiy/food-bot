@@ -19,10 +19,10 @@ export class SubscriptionsFunctionCreator extends FunctionCreator {
       const jsonMessage = message.json as SubscriptionTopicMessage;
 
       try {
-        // TODO: Error Handling
         await this.handleMessage(jsonMessage);
-      } catch {
+      } catch (error) {
         this.communicationService.sendErrorMessage(jsonMessage.id);
+        throw error;
       }
     });
   }

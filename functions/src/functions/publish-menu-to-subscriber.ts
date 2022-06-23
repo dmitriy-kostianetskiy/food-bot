@@ -29,9 +29,8 @@ export class PublishMenuToSubscriberFunctionCreator extends FunctionCreator {
 
           await this.communicationService.sendMessage(chatId, ...messages);
         } catch (error) {
-          // TODO: error handling
-          console.error(error);
           await this.communicationService.sendErrorMessage(chatId);
+          throw error;
         }
       });
   }
