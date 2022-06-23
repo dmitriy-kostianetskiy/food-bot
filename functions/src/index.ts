@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 
 import bootstrap from './bootstrap';
-import { GenerateMenuFunctionCreator } from './functions/generate-menu';
 import { GenerateMenuHttpFunctionCreator } from './functions/generate-menu-http';
 import { PublishMenuToAllFunctionCreator } from './functions/publish-menu-to-all';
 import { PublishMenuToSubscriberFunctionCreator } from './functions/publish-menu-to-subscriber';
@@ -11,7 +10,6 @@ import { TelegramSendMessageFunctionCreator } from './functions/telegram-send-me
 
 const createFunction = bootstrap();
 
-export const generateMenu = createFunction(GenerateMenuFunctionCreator);
 export const generateMenuHttps = createFunction(GenerateMenuHttpFunctionCreator);
 export const publishMenuToAll = createFunction(PublishMenuToAllFunctionCreator);
 export const publishMenuToSubscriber = createFunction(PublishMenuToSubscriberFunctionCreator);

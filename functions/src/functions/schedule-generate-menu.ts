@@ -1,12 +1,12 @@
 import { CloudFunction, pubsub } from 'firebase-functions';
 
 import { FunctionCreator } from './function-creator';
-import { PubsubService } from '../services/pubsub.service';
 import { Service } from 'typedi';
+import { MenuService } from '../services/menu.service';
 
 @Service()
 export class ScheduleGenerateMenuFunctionCreator extends FunctionCreator {
-  constructor(private readonly messagesService: PubsubService) {
+  constructor(private readonly menuService: MenuService) {
     super();
   }
 
@@ -14,6 +14,6 @@ export class ScheduleGenerateMenuFunctionCreator extends FunctionCreator {
     return pubsub
       .schedule('every friday 12:00')
       .timeZone('Europe/Moscow')
-      .onRun(async () => await this.messagesService.publish('generate-menu'));
+      .onRun(async () => await this.menuService.generateNew());
   }
 }

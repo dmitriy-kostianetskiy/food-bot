@@ -5,13 +5,12 @@ import {
   SubscriptionTopicMessage,
 } from '../model/pubsub';
 
-export type Topic = 'telegram-bot-messages' | 'generate-menu' | 'subscriptions';
+export type Topic = 'telegram-bot-messages' | 'subscriptions';
 
 @Service()
 export class PubsubService {
   constructor(private readonly pubsub: PubSub) {}
 
-  async publish(topic: 'generate-menu'): Promise<void>;
   async publish(topic: 'subscriptions', message: SubscriptionTopicMessage): Promise<void>;
   async publish(
     topic: 'telegram-bot-messages',
