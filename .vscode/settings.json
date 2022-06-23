@@ -1,7 +1,8 @@
 {
     "cSpell.words": [
         "firestore",
-        "pubsub"
+        "pubsub",
+        "typedi"
     ],
     "cSpell.language": "en"
 }

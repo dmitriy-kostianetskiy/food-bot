@@ -1,20 +1,15 @@
 import * as _ from 'lodash';
 
-import { MenuModel } from '../model';
-import { RecipeRepository } from '../repositories/recipe.repository';
+import { MenuModel, RecipeModel } from '../model';
 import { Service } from 'typedi';
 
 @Service()
 export class MenuGeneratorService {
-  constructor(readonly recipeService: RecipeRepository) {}
-
-  async generate(): Promise<MenuModel> {
-    const allRecipes = await this.recipeService.fetchAll();
-
-    const dinners = _(_.range(allRecipes.length))
+  generate(recipes: readonly RecipeModel[]): MenuModel {
+    const dinners = _(_.range(recipes.length))
       .shuffle()
       .take(7)
-      .map((index) => allRecipes[index])
+      .map((index) => recipes[index])
       .value();
 
     return {

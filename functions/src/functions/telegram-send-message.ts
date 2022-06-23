@@ -1,9 +1,9 @@
-import { HttpsFunction, pubsub } from 'firebase-functions';
+import { HttpsFunction } from 'firebase-functions';
 
 import { FunctionCreator } from './function-creator';
 import { Service } from 'typedi';
 import { TelegramService } from '../services/telegram.service';
-import { BotMessagingTopicMessage } from '../model';
+import { topicFunction } from '../utils';
 
 @Service()
 export class TelegramSendMessageFunctionCreator extends FunctionCreator {
@@ -12,15 +12,9 @@ export class TelegramSendMessageFunctionCreator extends FunctionCreator {
   }
 
   createFunction(): HttpsFunction {
-    return pubsub.topic('telegram-bot-messages').onPublish(async (message) => {
-      const jsonMessage = message.json as BotMessagingTopicMessage;
-
-      if (!jsonMessage?.messages || !jsonMessage?.chatId) {
-        return;
-      }
-
-      for (const item of jsonMessage.messages) {
-        await this.telegramService.sendHtml(jsonMessage.chatId, item);
+    return topicFunction('telegram-bot-messages', async (message) => {
+      for (const item of message.messages) {
+        await this.telegramService.sendHtml(message.chatId, item);
       }
     });
   }

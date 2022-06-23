@@ -1,28 +1,23 @@
 import { Service } from 'typedi';
+import { MenuModel, Subscription } from '../model';
 import { SubscriptionRepository } from '../repositories/subscription.repository';
-import { CommunicationService } from './communication.service';
 
 @Service()
 export class SubscriptionService {
-  constructor(
-    private readonly subscriptionRepository: SubscriptionRepository,
-    private readonly communicationService: CommunicationService,
-  ) {}
+  constructor(private readonly subscriptionRepository: SubscriptionRepository) {}
 
-  async addSubscription(id: string): Promise<void> {
-    await this.subscriptionRepository.addSubscription({
-      id,
-    });
-
-    this.communicationService.sendMessage(
-      id,
-      'Спасибо! Вы будете получать новое меню каждую пятницу в 12:00 по московскому времени 🍽',
-    );
+  load(): Promise<readonly Subscription[]> {
+    return this.subscriptionRepository.fetchAll();
   }
 
-  async removeSubscription(id: string): Promise<void> {
-    await this.subscriptionRepository.deleteSubscription(id);
+  async set(id: string, menu: MenuModel): Promise<void> {
+    await this.subscriptionRepository.set({
+      id,
+      menu,
+    });
+  }
 
-    this.communicationService.sendMessage(id, 'Нам очень жаль, что Вы нас покидаете 😿');
+  async remove(id: string): Promise<void> {
+    await this.subscriptionRepository.delete(id);
   }
 }

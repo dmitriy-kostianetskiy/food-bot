@@ -1,31 +1,30 @@
 import { Service } from 'typedi';
-import { Menu } from '../menu';
+import { MenuPrinterService } from './menu-printer.service';
 import { CategoryRepository } from '../repositories/category.repository';
-import { MenuRepository } from '../repositories/menu.repository';
+import { RecipeRepository } from '../repositories/recipe.repository';
 import { MenuGeneratorService } from './menu-generator.service';
+import { MenuModel } from '../model';
 
 @Service()
 export class MenuService {
   static readonly currentMenuPath = 'menu/current';
 
   constructor(
-    private readonly menuRepository: MenuRepository,
     private readonly categoryRepository: CategoryRepository,
+    private readonly recipeService: RecipeRepository,
     private readonly menuGenerator: MenuGeneratorService,
+    private readonly menuPrinterService: MenuPrinterService,
   ) {}
 
-  async load(): Promise<Menu> {
-    const [menuModel, categoryModels] = await Promise.all([
-      this.menuRepository.fetchCurrentMenu(),
+  async generateNew(): Promise<{ readonly model: MenuModel; readonly printed: readonly string[] }> {
+    const [recipes, categories] = await Promise.all([
+      this.recipeService.fetchAll(),
       this.categoryRepository.fetchAll(),
     ]);
 
-    return new Menu(menuModel, categoryModels);
-  }
+    const model = this.menuGenerator.generate(recipes);
+    const printed = this.menuPrinterService.print(model, categories);
 
-  async generateNew(): Promise<void> {
-    const menu = await this.menuGenerator.generate();
-
-    await this.menuRepository.replaceCurrentMenu(menu);
+    return { model, printed };
   }
 }

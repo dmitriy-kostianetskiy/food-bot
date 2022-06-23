@@ -30,16 +30,14 @@ export class TelegramBotHookFunctionCreator extends FunctionCreator {
 
   private configureCommands() {
     this.telegramService.telegraf.start(async (context) => {
-      this.pubsubService.publish('subscriptions', {
+      this.pubsubService.publish('create-subscription', {
         id: context.chat.id.toFixed(0),
-        action: 'add',
       });
     });
 
     this.telegramService.telegraf.command('stop', async (context) => {
-      this.pubsubService.publish('subscriptions', {
+      this.pubsubService.publish('remove-subscription', {
         id: context.chat.id.toFixed(0),
-        action: 'remove',
       });
     });
 

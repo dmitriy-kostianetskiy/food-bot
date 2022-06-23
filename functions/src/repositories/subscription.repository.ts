@@ -18,14 +18,14 @@ export class SubscriptionRepository {
     return subscribersCollection.docs.map((document) => document.data() as Subscription);
   }
 
-  async addSubscription(subscription: Subscription): Promise<void> {
+  async set(subscription: Subscription): Promise<void> {
     await this.firestore
       .collection(SubscriptionRepository.subscriptionsPath)
       .doc(subscription.id)
       .set(subscription);
   }
 
-  async deleteSubscription(id: string): Promise<void> {
+  async delete(id: string): Promise<void> {
     await this.firestore.collection(SubscriptionRepository.subscriptionsPath).doc(id).delete();
   }
 }

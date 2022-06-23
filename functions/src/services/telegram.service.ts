@@ -37,10 +37,6 @@ export class TelegramService {
     await this.telegram.sendMessage(chatId, html, { parse_mode: 'HTML' });
   }
 
-  async sendText(chatId: string, text: string): Promise<void> {
-    await this.telegram.sendMessage(chatId, text);
-  }
-
   async handleRequest(body: Update, response: ServerResponse): Promise<void> {
     await this.telegraf.handleUpdate(body, response);
   }

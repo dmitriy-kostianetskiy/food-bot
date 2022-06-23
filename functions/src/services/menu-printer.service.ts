@@ -1,21 +1,21 @@
 import * as _ from 'lodash';
 
-import { CategoryModel, MealModel, RecipeModel } from './model';
+import { CategoryModel, MealModel, RecipeModel } from '../model';
 
-import { Cart } from './cart';
-import { MenuModel } from './model/menu-model';
+import { Cart } from '../cart';
+import { MenuModel } from '../model/menu-model';
+import { Service } from 'typedi';
 
-export class Menu {
-  readonly cart = new Cart(this.menu, this.categories);
+@Service()
+export class MenuPrinterService {
+  print(menu: MenuModel, categories: readonly CategoryModel[]): readonly string[] {
+    const cart = new Cart(menu, categories);
 
-  constructor(readonly menu: MenuModel, readonly categories: readonly CategoryModel[]) {}
-
-  print(): readonly string[] {
-    return this.menu.dinners.map((item, index) => this.printRecipe(item, index));
+    return [...this.printMenu(menu), cart.print()];
   }
 
-  printWithCart(): readonly string[] {
-    return [...this.print(), this.cart.print()];
+  private printMenu(menu: MenuModel): readonly string[] {
+    return menu.dinners.map((item, index) => this.printRecipe(item, index));
   }
 
   private printRecipe(recipe: RecipeModel, index: number): string {

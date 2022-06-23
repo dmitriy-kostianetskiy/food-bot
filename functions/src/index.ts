@@ -1,18 +1,18 @@
 import 'reflect-metadata';
 
 import bootstrap from './bootstrap';
-import { GenerateMenuHttpFunctionCreator } from './functions/generate-menu-http';
-import { PublishMenuToAllFunctionCreator } from './functions/publish-menu-to-all';
-import { PublishMenuToSubscriberFunctionCreator } from './functions/publish-menu-to-subscriber';
+import { CreateSubscriptionFunctionCreator } from './functions/create-subscription';
+import { GenerateMenuFunctionCreator } from './functions/generate-menu';
+import { RemoveSubscriptionFunctionCreator } from './functions/remove-subscription';
 import { ScheduleGenerateMenuFunctionCreator } from './functions/schedule-generate-menu';
 import { TelegramBotHookFunctionCreator } from './functions/telegram-bot-hook';
 import { TelegramSendMessageFunctionCreator } from './functions/telegram-send-message';
 
 const createFunction = bootstrap();
 
-export const generateMenuHttps = createFunction(GenerateMenuHttpFunctionCreator);
-export const publishMenuToAll = createFunction(PublishMenuToAllFunctionCreator);
-export const publishMenuToSubscriber = createFunction(PublishMenuToSubscriberFunctionCreator);
+export const publishMenuToSubscriber = createFunction(GenerateMenuFunctionCreator);
 export const scheduleGenerateMenu = createFunction(ScheduleGenerateMenuFunctionCreator);
 export const telegramBotHook = createFunction(TelegramBotHookFunctionCreator);
 export const telegramSendMessage = createFunction(TelegramSendMessageFunctionCreator);
+export const createSubscription = createFunction(CreateSubscriptionFunctionCreator);
+export const removeSubscription = createFunction(RemoveSubscriptionFunctionCreator);
