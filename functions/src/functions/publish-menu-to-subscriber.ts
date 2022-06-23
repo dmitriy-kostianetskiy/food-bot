@@ -3,7 +3,7 @@ import { CloudFunction, firestore } from 'firebase-functions';
 import { FunctionCreator } from './function-creator';
 import { Service } from 'typedi';
 import { Subscription } from '../model';
-import { SubscriptionService } from '../services/subscription.service';
+import { SubscriptionRepository } from '../services/subscription.service';
 import { MenuService } from '../services/menu.service';
 import { CommunicationService } from '../services/communication.service';
 
@@ -18,7 +18,7 @@ export class PublishMenuToSubscriberFunctionCreator extends FunctionCreator {
 
   createFunction(): CloudFunction<firestore.QueryDocumentSnapshot> {
     return firestore
-      .document(SubscriptionService.specificSubscriptionPath)
+      .document(SubscriptionRepository.specificSubscriptionPath)
       .onCreate(async (snapshot) => {
         const subscription = snapshot.data() as Subscription;
         const chatId = subscription.id;

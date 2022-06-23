@@ -2,7 +2,7 @@ import { Change, CloudFunction, firestore } from 'firebase-functions';
 
 import { FunctionCreator } from './function-creator';
 import { Service } from 'typedi';
-import { SubscriptionService } from '../services/subscription.service';
+import { SubscriptionRepository } from '../services/subscription.service';
 import { MenuService } from '../services/menu.service';
 import { MenuRepository } from '../repositories/menu.repository';
 import { CommunicationService } from '../services/communication.service';
@@ -13,7 +13,7 @@ export class PublishMenuToAllFunctionCreator extends FunctionCreator {
   constructor(
     private readonly menuService: MenuService,
     private readonly communicationService: CommunicationService,
-    private readonly subscriptionService: SubscriptionService,
+    private readonly subscriptionService: SubscriptionRepository,
   ) {
     super();
   }

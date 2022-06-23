@@ -2,14 +2,14 @@ import { CloudFunction, pubsub } from 'firebase-functions';
 import { FunctionCreator } from './function-creator';
 import { Service } from 'typedi';
 import { SubscriptionTopicMessage } from '../model/pubsub';
-import { SubscriptionService } from '../services/subscription.service';
+import { SubscriptionRepository } from '../services/subscription.service';
 import { CommunicationService } from '../services/communication.service';
 
 @Service()
 export class SubscriptionsFunctionCreator extends FunctionCreator {
   constructor(
     private readonly communicationService: CommunicationService,
-    private readonly subscriptionService: SubscriptionService,
+    private readonly subscriptionService: SubscriptionRepository,
   ) {
     super();
   }
@@ -18,12 +18,12 @@ export class SubscriptionsFunctionCreator extends FunctionCreator {
     return pubsub.topic('subscriptions').onPublish(async (message) => {
       const jsonMessage = message.json as SubscriptionTopicMessage;
 
-      // TODO: Error Handling
-      await this.handleMessage(jsonMessage);
-
-      await this.subscriptionService.addSubscription({
-        id: jsonMessage.id,
-      });
+      try {
+        // TODO: Error Handling
+        await this.handleMessage(jsonMessage);
+      } catch {
+        this.communicationService.sendErrorMessage(jsonMessage.id);
+      }
     });
   }
 

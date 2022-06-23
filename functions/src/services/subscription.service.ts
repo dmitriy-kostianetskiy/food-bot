@@ -4,7 +4,7 @@ import { Service } from 'typedi';
 import { Subscription } from '../model';
 
 @Service()
-export class SubscriptionService {
+export class SubscriptionRepository {
   static readonly subscriptionsPath = 'subscriptions';
   static readonly specificSubscriptionPath = 'subscriptions/{subscribersId}';
 
@@ -12,7 +12,7 @@ export class SubscriptionService {
 
   async fetchAll(): Promise<readonly Subscription[]> {
     const subscribersCollection = await this.firestore
-      .collection(SubscriptionService.subscriptionsPath)
+      .collection(SubscriptionRepository.subscriptionsPath)
       .get();
 
     return subscribersCollection.docs.map((document) => document.data() as Subscription);
@@ -20,12 +20,12 @@ export class SubscriptionService {
 
   async addSubscription(subscription: Subscription): Promise<void> {
     await this.firestore
-      .collection(SubscriptionService.subscriptionsPath)
+      .collection(SubscriptionRepository.subscriptionsPath)
       .doc(subscription.id)
       .set(subscription);
   }
 
   async deleteSubscription(id: string): Promise<void> {
-    await this.firestore.collection(SubscriptionService.subscriptionsPath).doc(id).delete();
+    await this.firestore.collection(SubscriptionRepository.subscriptionsPath).doc(id).delete();
   }
 }
