@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
 
 import { MenuModel } from '../model';
-import RecipeService from './recipe.service';
+import { RecipeRepository } from '../repositories/recipe.repository';
 import { Service } from 'typedi';
 
 @Service()
 export class MenuGeneratorService {
-  constructor(readonly recipeService: RecipeService) {}
+  constructor(readonly recipeService: RecipeRepository) {}
 
   async generate(): Promise<MenuModel> {
     const allRecipes = await this.recipeService.fetchAll();

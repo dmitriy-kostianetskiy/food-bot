@@ -4,7 +4,7 @@ import { RecipeModel } from '../model';
 import { Service } from 'typedi';
 
 @Service()
-export default class RecipeService {
+export class RecipeRepository {
   constructor(private readonly firestore: admin.firestore.Firestore) {}
 
   async fetchAll(): Promise<readonly RecipeModel[]> {
