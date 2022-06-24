@@ -1,10 +1,12 @@
 import * as admin from 'firebase-admin';
 
-import { CloudFunction, HttpsFunction } from 'firebase-functions';
+import { CloudFunction, HttpsFunction, config } from 'firebase-functions';
+
 import { Container, Constructable } from 'typedi';
 
 import { FunctionCreator } from './functions/function-creator';
 import { PubSub } from '@google-cloud/pubsub';
+import { CONFIG_TOKEN } from './tokens';
 
 export type CreateFunction = (
   type: Constructable<FunctionCreator>,
@@ -17,6 +19,7 @@ export default function bootstrap(): CreateFunction {
 
   Container.set(admin.firestore.Firestore, admin.firestore());
   Container.set(PubSub, new PubSub());
+  Container.set(CONFIG_TOKEN, config());
 
   return (type) => Container.get<FunctionCreator>(type).createFunction();
 }

@@ -1,25 +1,28 @@
-import { Service } from 'typedi';
+import { Inject, Service } from 'typedi';
 import { Telegraf, Context, Telegram } from 'telegraf';
-import { ConfigurationService } from './configuration.service';
 import { Update } from 'typegram';
 import { ServerResponse } from 'http';
+import { Configuration } from '../model';
+import { CONFIG_TOKEN } from '../tokens';
 
 @Service()
 export class TelegramService {
+  @Inject(CONFIG_TOKEN)
+  private readonly configuration!: Configuration;
+
   readonly telegraf: Telegraf<Context> = this.createTelegraf();
 
   get telegram(): Telegram {
     return this.telegraf.telegram;
   }
 
-  constructor(private readonly configurationService: ConfigurationService) {}
-
   private createTelegraf(): Telegraf<Context> {
-    if (!this.configurationService.botToken) {
+    const token = this.configuration.bot?.token;
+    if (!token) {
       throw Error('Unable to run bot because bot token is empty');
     }
 
-    return new Telegraf(this.configurationService.botToken);
+    return new Telegraf(token);
   }
 
   // configure(): void {
