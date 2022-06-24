@@ -2,17 +2,11 @@ import { createStubInstance, assert } from 'sinon';
 import { RecipeRepository } from '../repositories/recipe.repository';
 import { RecipeModel } from '../model';
 import { RecipeService } from './recipe.service';
+import { createRecipe } from '../test';
 
 test('should get data from repository', async () => {
   // Arrange
-  const model: RecipeModel = {
-    id: '1',
-    main: {
-      ingredients: [],
-      steps: [],
-      title: 'Main Dish',
-    },
-  };
+  const model: RecipeModel = createRecipe();
 
   const repository = createStubInstance(RecipeRepository, {
     fetchAll: Promise.resolve([model]),
@@ -24,16 +18,7 @@ test('should get data from repository', async () => {
   const items = await service.getAll();
 
   // Assert
-  expect(items).toStrictEqual([
-    {
-      id: '1',
-      main: {
-        ingredients: [],
-        steps: [],
-        title: 'Main Dish',
-      },
-    },
-  ]);
+  expect(items).toStrictEqual([model]);
 });
 
 test('should cache data', async () => {
