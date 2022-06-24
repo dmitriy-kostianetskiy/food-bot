@@ -7,6 +7,7 @@ export const createRecipe = (model?: Partial<RecipeModel>): RecipeModel => {
       ingredients: [],
       steps: [],
       title: 'Main Dish',
+      ...(model?.main || {}),
     },
     ...(model || {}),
   };

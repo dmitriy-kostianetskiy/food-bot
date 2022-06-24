@@ -6,3 +6,4 @@ export * from './menu-model';
 export * from './configuration';
 export * from './pubsub';
 export * from './translations';
+export * from './cart';
