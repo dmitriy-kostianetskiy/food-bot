@@ -2,16 +2,20 @@ import * as _ from 'lodash';
 
 import { CategoryModel, MealModel, RecipeModel } from '../model';
 
-import { Cart } from '../cart';
 import { MenuModel } from '../model/menu-model';
 import { Service } from 'typedi';
+import { CartPrinterService } from './cart-printer.service';
 
 @Service()
 export class MenuPrinterService {
-  print(menu: MenuModel, categories: readonly CategoryModel[]): readonly string[] {
-    const cart = new Cart(menu, categories);
+  constructor(private readonly cartPrinterService: CartPrinterService) {}
 
-    return [...this.printMenu(menu), cart.print()];
+  print(menu: MenuModel, categories: readonly CategoryModel[]): readonly string[] {
+    return [...this.printMenu(menu), this.printCart(menu, categories)];
+  }
+
+  private printCart(menu: MenuModel, categories: readonly CategoryModel[]): string {
+    return this.cartPrinterService.print(menu, categories);
   }
 
   private printMenu(menu: MenuModel): readonly string[] {

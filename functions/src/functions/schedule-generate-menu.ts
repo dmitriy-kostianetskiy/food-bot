@@ -20,7 +20,7 @@ export class ScheduleGenerateMenuFunctionCreator extends FunctionCreator {
       .schedule('every friday 12:00')
       .timeZone('Europe/Moscow')
       .onRun(async () => {
-        const subscriptions = await this.subscriptionService.load();
+        const subscriptions = await this.subscriptionService.getAll();
 
         const chunks = _.chunk(subscriptions, 100);
 

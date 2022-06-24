@@ -1,8 +1,7 @@
 import * as _ from 'lodash';
+import { Service } from 'typedi';
 
-import { CategoryModel, IngredientModel, MenuModel } from './model';
-
-export type CategoryMapper = (ingredientName: string) => string;
+import { CategoryModel, IngredientModel, MenuModel } from '../model';
 
 export interface CartIngredient {
   readonly name: string;
@@ -13,18 +12,15 @@ export interface CartIngredient {
   }[];
 }
 
-export class Cart {
-  private readonly ingredients: _.Dictionary<readonly CartIngredient[]>;
+@Service()
+export class CartPrinterService {
+  print(menu: MenuModel, categories: readonly CategoryModel[]): string {
+    const cartIngredients = this.getCartIngredients(menu, categories);
 
-  constructor(private menu: MenuModel, private categories: readonly CategoryModel[]) {
-    this.ingredients = this.getCartIngredients();
-  }
+    const ingredients = _(cartIngredients).reduce((acc, item, key) => {
+      const printedIngredients = this.printCartIngredients(item);
 
-  print(): string {
-    const ingredients = _(this.ingredients).reduce((acc, item, key) => {
-      const cartIngredients = this.printCartIngredients(item);
-
-      return `${acc}\n<b>${key}</b>\n${cartIngredients}`;
+      return `${acc}\n<b>${key}</b>\n${printedIngredients}`;
     }, '');
 
     return `🛒 <b>Список покупок:</b>${ingredients}`;
@@ -59,8 +55,11 @@ export class Cart {
       .join('\n');
   }
 
-  private getCartIngredients(): _.Dictionary<readonly CartIngredient[]> {
-    const mapping = _(this.categories)
+  private getCartIngredients(
+    menu: MenuModel,
+    categories: readonly CategoryModel[],
+  ): _.Dictionary<readonly CartIngredient[]> {
+    const mapping = _(categories)
       .flatMap((item) =>
         item.ingredients.map((title) => ({
           ingredient: title,
@@ -71,7 +70,7 @@ export class Cart {
       .mapValues((item) => item.category)
       .value();
 
-    return _(this.getAllIngredients())
+    return _(this.getAllIngredients(menu))
       .groupBy((item) => item.ingredient.title)
       .map<CartIngredient>((group, groupKey) => {
         return {
@@ -95,11 +94,11 @@ export class Cart {
       }, {});
   }
 
-  private getAllIngredients(): readonly {
+  private getAllIngredients(menu: MenuModel): readonly {
     readonly ingredient: IngredientModel;
     readonly index: number;
   }[] {
-    return _.flatMap(this.menu.dinners, (recipe, index) => {
+    return _.flatMap(menu.dinners, (recipe, index) => {
       const all = [...recipe.main.ingredients, ...(recipe.side ? recipe.side.ingredients : [])];
 
       return all.map((ingredient) => ({

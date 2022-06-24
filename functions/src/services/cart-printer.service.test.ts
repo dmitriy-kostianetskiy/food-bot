@@ -1,6 +1,6 @@
-import { CategoryModel, MenuModel } from './model';
+import { CategoryModel, MenuModel } from '../model';
 
-import { Cart } from './cart';
+import { CartPrinterService } from './cart-printer.service';
 
 const categories: readonly CategoryModel[] = [
   {
@@ -14,6 +14,7 @@ const categories: readonly CategoryModel[] = [
 ];
 
 test('should place apples and carrots into fruits and vegetables categories accordingly', () => {
+  // Arrange
   const menu: MenuModel = {
     dinners: [
       {
@@ -38,9 +39,13 @@ test('should place apples and carrots into fruits and vegetables categories acco
     ],
   };
 
-  const cart = new Cart(menu, categories);
+  const cart = new CartPrinterService();
 
-  expect(cart.print()).toBe(
+  // Act
+  const printed = cart.print(menu, categories);
+
+  // Assert
+  expect(printed).toBe(
     `🛒 <b>Список покупок:</b>
 <b>Овощи</b>
  - Морковь - 1 кг (1)
@@ -50,6 +55,7 @@ test('should place apples and carrots into fruits and vegetables categories acco
 });
 
 test('should set indexes and sum up weight accordingly', () => {
+  // Arrange
   const menu: MenuModel = {
     dinners: [
       {
@@ -93,9 +99,13 @@ test('should set indexes and sum up weight accordingly', () => {
     ],
   };
 
-  const cart = new Cart(menu, categories);
+  const cart = new CartPrinterService();
 
-  expect(cart.print()).toBe(
+  // Act
+  const printed = cart.print(menu, categories);
+
+  // Assert
+  expect(printed).toBe(
     `🛒 <b>Список покупок:</b>
 <b>Овощи</b>
  - Морковь - 4 кг (1, 2)
@@ -105,6 +115,7 @@ test('should set indexes and sum up weight accordingly', () => {
 });
 
 test('should not display unit of measure', () => {
+  // Arrange
   const menu: MenuModel = {
     dinners: [
       {
@@ -122,9 +133,13 @@ test('should not display unit of measure', () => {
     ],
   };
 
-  const cart = new Cart(menu, categories);
+  const cart = new CartPrinterService();
 
-  expect(cart.print()).toBe(
+  // Act
+  const printed = cart.print(menu, categories);
+
+  // Assert
+  expect(printed).toBe(
     `🛒 <b>Список покупок:</b>
 <b>Другое</b>
  - Соль (1)`,
