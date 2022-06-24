@@ -2,7 +2,7 @@ import { PubsubService } from './pubsub.service';
 import { createStubInstance, assert } from 'sinon';
 import { PubSub, Topic } from '@google-cloud/pubsub';
 
-test('should publish message to pubsub', () => {
+test('should publish message to pubsub', async () => {
   // Arrange
   const topic = createStubInstance(Topic);
 
@@ -12,7 +12,7 @@ test('should publish message to pubsub', () => {
   const pubsubService = new PubsubService(pubSub);
 
   // Act
-  pubsubService.publish('generate-menu', { subscriptionIds: ['1', '2', '3'] });
+  await pubsubService.publish('generate-menu', { subscriptionIds: ['1', '2', '3'] });
 
   // Assert
   assert.calledOnceWithExactly(pubSub.topic, 'generate-menu');
