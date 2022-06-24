@@ -1,6 +1,7 @@
 import { CategoryModel, MenuModel } from '../model';
 
 import { CartPrinterService } from './cart-printer.service';
+import { TranslationService } from './translation.service';
 
 const categories: readonly CategoryModel[] = [
   {
@@ -39,7 +40,7 @@ test('should place apples and carrots into fruits and vegetables categories acco
     ],
   };
 
-  const cart = new CartPrinterService();
+  const cart = new CartPrinterService(new TranslationService());
 
   // Act
   const printed = cart.print(menu, categories);
@@ -99,7 +100,7 @@ test('should set indexes and sum up weight accordingly', () => {
     ],
   };
 
-  const cart = new CartPrinterService();
+  const cart = new CartPrinterService(new TranslationService());
 
   // Act
   const printed = cart.print(menu, categories);
@@ -133,7 +134,7 @@ test('should not display unit of measure', () => {
     ],
   };
 
-  const cart = new CartPrinterService();
+  const cart = new CartPrinterService(new TranslationService());
 
   // Act
   const printed = cart.print(menu, categories);
