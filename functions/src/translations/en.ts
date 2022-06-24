@@ -8,4 +8,6 @@ export const TRANSLATION_DICTIONARY_EN: TranslationDictionary = {
   cookingTime: 'Cooking time',
   ingredients: 'Ingredients',
   steps: 'Steps',
+  cart: 'Cart',
+  otherCategory: 'Other',
 };

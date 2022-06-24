@@ -1,9 +1,10 @@
 import * as _ from 'lodash';
 import { Service } from 'typedi';
 
-import { CategoryModel, IngredientModel, MenuModel } from '../model';
+import { CategoryModel, IngredientModel, MenuModel, RecipeModel } from '../model';
+import { TranslationService } from './translation.service';
 
-export interface CartIngredient {
+interface CartIngredient {
   readonly name: string;
   readonly byMeals: {
     readonly index: number;
@@ -14,8 +15,10 @@ export interface CartIngredient {
 
 @Service()
 export class CartPrinterService {
+  constructor(private readonly translationService: TranslationService) {}
+
   print(menu: MenuModel, categories: readonly CategoryModel[]): string {
-    const cartIngredients = this.getCartIngredients(menu, categories);
+    const cartIngredients = this.getCartIngredients(menu.dinners, categories);
 
     const ingredients = _(cartIngredients).reduce((acc, item, key) => {
       const printedIngredients = this.printCartIngredients(item);
@@ -23,7 +26,9 @@ export class CartPrinterService {
       return `${acc}\n<b>${key}</b>\n${printedIngredients}`;
     }, '');
 
-    return `🛒 <b>Список покупок:</b>${ingredients}`;
+    const cartLabel = this.translationService.get('cart');
+
+    return `🛒 <b>${cartLabel}:</b>${ingredients}`;
   }
 
   private printCartIngredients(ingredients: readonly CartIngredient[]): string {
@@ -56,34 +61,26 @@ export class CartPrinterService {
   }
 
   private getCartIngredients(
-    menu: MenuModel,
+    recipes: readonly RecipeModel[],
     categories: readonly CategoryModel[],
   ): _.Dictionary<readonly CartIngredient[]> {
-    const mapping = _(categories)
-      .flatMap((item) =>
-        item.ingredients.map((title) => ({
-          ingredient: title,
-          category: item.title,
-        })),
-      )
-      .mapKeys((item) => item.ingredient)
-      .mapValues((item) => item.category)
-      .value();
+    const mapping = this.buildIngredientToCategoryMapping(categories);
+    const otherCategory = this.translationService.get('otherCategory');
 
-    return _(this.getAllIngredients(menu))
-      .groupBy((item) => item.ingredient.title)
+    return _(this.getIndexIngredientPairs(recipes))
+      .groupBy(([, ingredient]) => ingredient.title)
       .map<CartIngredient>((group, groupKey) => {
         return {
           name: groupKey,
-          byMeals: group.map((item) => ({
-            index: item.index,
-            amount: item.ingredient.amount || 0,
-            unit: item.ingredient.unit,
+          byMeals: group.map(([index, ingredient]) => ({
+            index: index,
+            amount: ingredient.amount || 0,
+            unit: ingredient.unit,
           })),
         };
       })
       .reduce<_.Dictionary<CartIngredient[]>>((acc, item) => {
-        const category = mapping[item.name] || 'Другое';
+        const category = mapping[item.name] || otherCategory;
         if (!acc[category]) {
           acc[category] = [];
         }
@@ -94,17 +91,33 @@ export class CartPrinterService {
       }, {});
   }
 
-  private getAllIngredients(menu: MenuModel): readonly {
-    readonly ingredient: IngredientModel;
-    readonly index: number;
-  }[] {
-    return _.flatMap(menu.dinners, (recipe, index) => {
-      const all = [...recipe.main.ingredients, ...(recipe.side ? recipe.side.ingredients : [])];
+  private buildIngredientToCategoryMapping(
+    categories: readonly CategoryModel[],
+  ): _.Dictionary<string> {
+    return _(categories)
+      .flatMap((item) =>
+        item.ingredients.map((title) => ({
+          ingredient: title,
+          category: item.title,
+        })),
+      )
+      .mapKeys((item) => item.ingredient)
+      .mapValues((item) => item.category)
+      .value();
+  }
+
+  private getIndexIngredientPairs(recipes: readonly RecipeModel[]): [number, IngredientModel][] {
+    return _.flatMap(recipes, (recipe, index) => {
+      const all = this.getAllRecipeIngredients(recipe);
 
       return all.map((ingredient) => ({
         index,
         ingredient,
       }));
-    });
+    }).map(({ index, ingredient }) => [index, ingredient]);
+  }
+
+  private getAllRecipeIngredients(recipe: RecipeModel): readonly IngredientModel[] {
+    return [...recipe.main.ingredients, ...(recipe.side ? recipe.side.ingredients : [])];
   }
 }

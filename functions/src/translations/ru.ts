@@ -9,4 +9,6 @@ export const TRANSLATION_DICTIONARY_RU: TranslationDictionary = {
   cookingTime: 'Время приготовления',
   ingredients: 'Ингредиенты',
   steps: 'Рецепт',
+  cart: 'Список покупок',
+  otherCategory: 'Другое',
 };

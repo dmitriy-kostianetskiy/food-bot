@@ -5,4 +5,6 @@ export type TranslationKey =
   | 'diner'
   | 'cookingTime'
   | 'ingredients'
-  | 'steps';
+  | 'steps'
+  | 'cart'
+  | 'otherCategory';
