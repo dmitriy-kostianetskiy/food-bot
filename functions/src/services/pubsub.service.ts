@@ -7,7 +7,6 @@ export class PubsubService {
   constructor(private readonly pubsub: PubSub) {}
 
   async publish<T extends Topic>(topic: T, message: TopicMessage<T>): Promise<void> {
-    // TODO: replace publishJSON
-    await this.pubsub.topic(topic).publishJSON(message);
+    await this.pubsub.topic(topic).publishMessage({ json: message });
   }
 }
