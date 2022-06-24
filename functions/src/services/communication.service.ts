@@ -1,12 +1,14 @@
 import { Service } from 'typedi';
 import { PubsubService } from './pubsub.service';
 import { TelegramService } from './telegram.service';
+import { TranslationService } from './translation.service';
 
 @Service()
 export class CommunicationService {
   constructor(
     private readonly pubsubService: PubsubService,
     private readonly telegramService: TelegramService,
+    private readonly translationService: TranslationService,
   ) {}
 
   async sendMessageToChat(chatId: string, ...messages: string[]): Promise<void> {
@@ -27,17 +29,14 @@ export class CommunicationService {
   }
 
   async sendErrorMessage(chatId: string): Promise<void> {
-    await this.sendMessageToChat(chatId, 'Что-то пошло не так!');
+    await this.sendMessageToChat(chatId, this.translationService.get('error'));
   }
 
   async sendThankYouMessage(chatId: string): Promise<void> {
-    await this.sendMessageToChat(
-      chatId,
-      'Спасибо! Вы будете получать новое меню каждую пятницу в 12:00 по московскому времени 🍽',
-    );
+    await this.sendMessageToChat(chatId, this.translationService.get('thankYou'));
   }
 
   async sendGoodByeMessage(chatId: string): Promise<void> {
-    await this.sendMessageToChat(chatId, 'Нам очень жаль, что Вы нас покидаете 😿');
+    await this.sendMessageToChat(chatId, this.translationService.get('goodBye'));
   }
 }
