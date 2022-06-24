@@ -1,3 +1,3 @@
-export type Languages = 'en' | 'ru';
-export type TranslationKey = 'error' | 'thankYou' | 'goodBye';
-export type TranslationDictionary = Record<TranslationKey, string>;
+export * from './languages';
+export * from './translation-dictionary';
+export * from './translation-key';

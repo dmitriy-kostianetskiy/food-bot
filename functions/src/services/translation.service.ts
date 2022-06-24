@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { Languages, TranslationDictionary, TranslationKey } from '../model/translations';
+import { Languages, TranslationDictionary, TranslationKey } from '../model';
 import { TRANSLATION_DICTIONARIES } from '../translations/all';
 
 @Service()

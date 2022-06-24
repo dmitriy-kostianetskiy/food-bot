@@ -1,4 +1,4 @@
-import { Languages, TranslationDictionary } from '../model/translations';
+import { TranslationDictionary, Languages } from '../model';
 import { TRANSLATION_DICTIONARY_EN } from './en';
 import { TRANSLATION_DICTIONARY_RU } from './ru';
 

@@ -1,4 +1,4 @@
-import { TranslationDictionary } from '../model/translations';
+import { TranslationDictionary } from '../model';
 
 export const TRANSLATION_DICTIONARY_EN: TranslationDictionary = {
   goodBye: 'We are sorry to see you go!',
