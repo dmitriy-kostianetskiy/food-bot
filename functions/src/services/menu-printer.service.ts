@@ -1,28 +1,31 @@
 import * as _ from 'lodash';
 
-import { CategoryModel, MealModel, RecipeModel } from '../model';
+import { IngredientModel, MealModel, RecipeModel } from '../model';
 
 import { MenuModel } from '../model/menu-model';
 import { Service } from 'typedi';
-import { CartPrinterService } from './cart-printer.service';
+import { TranslationService } from './translation.service';
 
 @Service()
 export class MenuPrinterService {
-  constructor(private readonly cartPrinterService: CartPrinterService) {}
+  constructor(private readonly translationService: TranslationService) {}
 
-  print(menu: MenuModel, categories: readonly CategoryModel[]): readonly string[] {
-    return [...this.printMenu(menu), this.printCart(menu, categories)];
+  print(menu: MenuModel): readonly string[] {
+    return [...this.printRecipes(menu.dinners)];
   }
 
-  private printCart(menu: MenuModel, categories: readonly CategoryModel[]): string {
-    return this.cartPrinterService.print(menu, categories);
-  }
-
-  private printMenu(menu: MenuModel): readonly string[] {
-    return menu.dinners.map((item, index) => this.printRecipe(item, index));
+  private printRecipes(recipes: readonly RecipeModel[]): readonly string[] {
+    return recipes.map((item, index) => this.printRecipe(item, index));
   }
 
   private printRecipe(recipe: RecipeModel, index: number): string {
+    const header = this.printRecipeHeader(index + 1, recipe.readyIn);
+    const body = this.printRecipeBody(recipe);
+
+    return header + body;
+  }
+
+  private printRecipeBody(recipe: RecipeModel): string {
     let result = '';
 
     result += this.printMeal(recipe.main);
@@ -30,23 +33,56 @@ export class MenuPrinterService {
       result += '\n' + this.printMeal(recipe.side);
     }
 
-    return `<b>🍜 Ужин № ${index + 1}</b>\n<i>⏳ Время приготовления: ${
-      recipe.readyIn
-    }</i>\n${result}`;
+    return result;
+  }
+
+  private printRecipeHeader(dinerNumber: number, readyIn?: string): string {
+    const dinerLine = this.printDinerHeader(dinerNumber);
+
+    if (!readyIn) {
+      return dinerLine;
+    }
+
+    const cookingTimeLine = this.printCookingTimeHeader(readyIn);
+
+    return dinerLine + cookingTimeLine;
+  }
+
+  private printDinerHeader(dinerNumber: number): string {
+    const dinerLabel = this.translationService.get('diner');
+
+    return `<b>🍜 ${dinerLabel} № ${dinerNumber}</b>\n`;
+  }
+
+  private printCookingTimeHeader(readyIn: string | undefined): string {
+    if (!readyIn) {
+      return '';
+    }
+
+    const cookingTimeLabel = this.translationService.get('cookingTime');
+    return `<i>⏳ ${cookingTimeLabel}: ${readyIn}</i>\n`;
   }
 
   private printMeal(meal: MealModel): string {
-    const ingredients = meal.ingredients
+    const ingredientsLabel = this.translationService.get('ingredients');
+    const ingredients = this.printIngredients(meal.ingredients);
+
+    const stepsLabel = this.translationService.get('steps');
+    const steps = this.printSteps(meal.steps);
+
+    return `🍗 <b>${meal.title}</b>\n\n🛒 <b>${ingredientsLabel}:</b>\n${ingredients}\n\n🍽 <b>${stepsLabel}:</b>\n${steps}`;
+  }
+
+  private printIngredients(ingredients: readonly IngredientModel[]): string {
+    return ingredients
       .map(({ amount, unit, title }) =>
         amount && unit ? `- ${title} - ${amount} ${unit}` : `- ${title}`,
       )
       .join('\n');
+  }
 
-    const steps = meal.steps
-      .map((item, index) => `${this.printNumber(index + 1)} ${item}`)
-      .join('\n');
-
-    return `🍗 <b>${meal.title}</b>\n\n🛒 <b>Ингредиенты:</b>\n${ingredients}\n\n🍽 <b>Рецепт:</b>\n${steps}`;
+  private printSteps(steps: readonly string[]): string {
+    return steps.map((item, index) => `${this.printNumber(index + 1)} ${item}`).join('\n');
   }
 
   private printNumber(value: number): string {

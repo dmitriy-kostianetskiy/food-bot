@@ -1,9 +1,9 @@
 import { Service } from 'typedi';
-import { MenuPrinterService } from './menu-printer.service';
 import { MenuModelFactory } from './menu-model.factory';
 import { MenuModel } from '../model';
 import { CategoryService } from './category.service';
 import { RecipeService } from './recipe.service';
+import { PrinterService } from './printer-service';
 
 @Service()
 export class MenuFactory {
@@ -13,7 +13,7 @@ export class MenuFactory {
     private readonly categoryService: CategoryService,
     private readonly recipeService: RecipeService,
     private readonly menuModelFactory: MenuModelFactory,
-    private readonly menuPrinterService: MenuPrinterService,
+    private readonly printerService: PrinterService,
   ) {}
 
   async generateNew(): Promise<{ readonly model: MenuModel; readonly printed: readonly string[] }> {
@@ -23,7 +23,7 @@ export class MenuFactory {
     ]);
 
     const model = this.menuModelFactory.create(recipes);
-    const printed = this.menuPrinterService.print(model, categories);
+    const printed = this.printerService.print(model, categories);
 
     return { model, printed };
   }
