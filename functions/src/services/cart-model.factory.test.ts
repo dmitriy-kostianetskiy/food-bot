@@ -1,21 +1,32 @@
-import { CartModel, CategoryModel, MenuModel } from '../model';
+import { CartModel, MenuModel } from '../model';
 import { RecipeBuilder } from '../test';
 import { CartModelFactory } from './cart-model.factory';
+import { IngredientMapper } from './ingredient-mapper';
+import { createStubInstance } from 'sinon';
 
-import { TranslationService } from './translation.service';
+import { IngredientMapperFactory } from './ingredient-mapper.factory';
 
-const categories: readonly CategoryModel[] = [
-  {
-    title: 'Vegetables',
-    ingredients: ['Carrot'],
-  },
-  {
-    title: 'Fruits',
-    ingredients: ['Apple'],
-  },
-];
+const mapper = new IngredientMapper(
+  [
+    {
+      title: 'Vegetables',
+      ingredients: ['Carrot'],
+    },
+    {
+      title: 'Fruits',
+      ingredients: ['Apple'],
+    },
+  ],
+  'Other',
+);
 
-test('should place apples and carrots into fruits and vegetables categories accordingly', () => {
+function createMapperFactory(): IngredientMapperFactory {
+  return createStubInstance(IngredientMapperFactory, {
+    create: Promise.resolve(mapper),
+  });
+}
+
+test('should place apples and carrots into fruits and vegetables categories accordingly', async () => {
   // Arrange
   const menu: MenuModel = {
     dinners: [
@@ -38,10 +49,10 @@ test('should place apples and carrots into fruits and vegetables categories acco
     ],
   };
 
-  const factory = new CartModelFactory(new TranslationService());
+  const factory = new CartModelFactory(createMapperFactory());
 
   // Act
-  const cart = factory.create(menu, categories);
+  const cart = await factory.create(menu);
 
   // Assert
   const expectedCart: CartModel = {
@@ -82,7 +93,7 @@ test('should place apples and carrots into fruits and vegetables categories acco
   expect(cart).toStrictEqual(expectedCart);
 });
 
-test('should set indexes and sum up weight accordingly', () => {
+test('should set indexes and sum up weight accordingly', async () => {
   // Arrange
   const menu: MenuModel = {
     dinners: [
@@ -121,10 +132,10 @@ test('should set indexes and sum up weight accordingly', () => {
     ],
   };
 
-  const factory = new CartModelFactory(new TranslationService());
+  const factory = new CartModelFactory(createMapperFactory());
 
   // Act
-  const cart = factory.create(menu, categories);
+  const cart = await factory.create(menu);
 
   // Assert
   const expectedCart: CartModel = {
@@ -165,7 +176,7 @@ test('should set indexes and sum up weight accordingly', () => {
   expect(cart).toStrictEqual(expectedCart);
 });
 
-test('should not display unit of measure', () => {
+test('should not display unit of measure', async () => {
   // Arrange
   const menu: MenuModel = {
     dinners: [
@@ -181,10 +192,10 @@ test('should not display unit of measure', () => {
     ],
   };
 
-  const factory = new CartModelFactory(new TranslationService());
+  const factory = new CartModelFactory(createMapperFactory());
 
   // Act
-  const cart = factory.create(menu, categories);
+  const cart = await factory.create(menu);
 
   // Assert
   const expectedCart: CartModel = {
@@ -205,7 +216,7 @@ test('should not display unit of measure', () => {
   expect(cart).toStrictEqual(expectedCart);
 });
 
-test('should group different units together', () => {
+test('should group different units together', async () => {
   // Arrange
   const menu: MenuModel = {
     dinners: [
@@ -228,10 +239,10 @@ test('should group different units together', () => {
     ],
   };
 
-  const factory = new CartModelFactory(new TranslationService());
+  const factory = new CartModelFactory(createMapperFactory());
 
   // Act
-  const cart = factory.create(menu, categories);
+  const cart = await factory.create(menu);
 
   // Assert
   const expectedCart: CartModel = {

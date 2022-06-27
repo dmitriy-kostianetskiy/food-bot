@@ -34,10 +34,6 @@ export class SubscriptionService {
     return subscription;
   }
 
-  async set(subscription: Subscription): Promise<void> {
-    await this.subscriptionRepository.set(subscription);
-  }
-
   async remove(id: string): Promise<void> {
     await this.subscriptionRepository.delete(id);
   }
