@@ -9,15 +9,14 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app
     steps:
       - uses: actions/checkout@v3
-        working-directory: ./functions
       - uses: actions/setup-node@v3
-        working-directory: ./functions
         with:
           node-version: 16
           cache: "yarn"
       - run: yarn ci
-        working-directory: ./functions
       - run: yarn test
-        working-directory: ./functions
