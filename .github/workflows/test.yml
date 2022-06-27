@@ -11,7 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        working-directory: ./functions
       - uses: actions/setup-node@v3
+        working-directory: ./functions
         with:
           node-version: 16
           cache: "yarn"
