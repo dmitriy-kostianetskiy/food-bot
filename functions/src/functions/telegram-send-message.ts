@@ -1,33 +1,21 @@
-import { HttpsFunction, region } from 'firebase-functions';
+import { HttpsFunction } from 'firebase-functions';
 
-import { BotMessage } from '../services/pubsub.service';
-import BotService from '../services/bot.service';
 import { FunctionCreator } from './function-creator';
 import { Service } from 'typedi';
-import { ConfigurationService } from '../services/configuration.service';
+import { TelegramService } from '../services/telegram.service';
+import { topicFunction } from '../utils';
 
 @Service()
 export class TelegramSendMessageFunctionCreator extends FunctionCreator {
-  constructor(
-    private readonly botService: BotService,
-    private readonly configurationService: ConfigurationService,
-  ) {
+  constructor(private readonly telegramService: TelegramService) {
     super();
   }
 
   createFunction(): HttpsFunction {
-    return region(this.configurationService.functionRegion)
-      .pubsub.topic('bot-messages')
-      .onPublish(async (message) => {
-        const jsonMessage = message.json as BotMessage;
-
-        if (!jsonMessage?.messages || !jsonMessage?.subscriberId) {
-          return;
-        }
-
-        for (const item of jsonMessage.messages) {
-          await this.botService.sendHtml(jsonMessage.subscriberId, item);
-        }
-      });
+    return topicFunction('telegram-bot-messages', async (message) => {
+      for (const item of message.messages) {
+        await this.telegramService.sendHtml(message.chatId, item);
+      }
+    });
   }
 }

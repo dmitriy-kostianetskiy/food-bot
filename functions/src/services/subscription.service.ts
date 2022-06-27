@@ -1,32 +1,44 @@
-import * as admin from 'firebase-admin';
-
 import { Service } from 'typedi';
 import { Subscription } from '../model';
-import { ConfigurationService } from './configuration.service';
+import { SubscriptionRepository } from '../repositories/subscription.repository';
+import { SubscriptionFactory } from './subscription-factory';
 
 @Service()
 export class SubscriptionService {
   constructor(
-    private readonly firestore: admin.firestore.Firestore,
-    private readonly configurationService: ConfigurationService,
+    private readonly subscriptionRepository: SubscriptionRepository,
+    private readonly subscriptionFactory: SubscriptionFactory,
   ) {}
 
-  async fetchAll(): Promise<readonly Subscription[]> {
-    const subscribersCollection = await this.firestore
-      .collection(this.configurationService.subscriptionsPath)
-      .get();
-
-    return subscribersCollection.docs.map((document) => document.data() as Subscription);
+  getAll(): Promise<readonly Subscription[]> {
+    return this.subscriptionRepository.fetchAll();
   }
 
-  async addSubscription(subscription: Subscription): Promise<void> {
-    await this.firestore
-      .collection(this.configurationService.subscriptionsPath)
-      .doc(subscription.id)
-      .set(subscription);
+  async getOrCreate(id: string): Promise<Subscription> {
+    let subscription = await this.subscriptionRepository.get(id);
+
+    if (!subscription) {
+      subscription = await this.subscriptionFactory.create(id);
+
+      await this.subscriptionRepository.set(subscription);
+    }
+
+    return subscription;
   }
 
-  async deleteSubscription(id: string): Promise<void> {
-    await this.firestore.collection(this.configurationService.subscriptionsPath).doc(id).delete();
+  async createNewOrUpdateExisting(id: string): Promise<Subscription> {
+    const subscription = await this.subscriptionFactory.create(id);
+
+    await this.subscriptionRepository.set(subscription);
+
+    return subscription;
+  }
+
+  async set(subscription: Subscription): Promise<void> {
+    await this.subscriptionRepository.set(subscription);
+  }
+
+  async remove(id: string): Promise<void> {
+    await this.subscriptionRepository.delete(id);
   }
 }

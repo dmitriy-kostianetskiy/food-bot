@@ -1,23 +1,36 @@
-import { CloudFunction, region } from 'firebase-functions';
+import { CloudFunction, pubsub } from 'firebase-functions';
 
 import { FunctionCreator } from './function-creator';
-import { PubsubService } from '../services/pubsub.service';
 import { Service } from 'typedi';
-import { ConfigurationService } from '../services/configuration.service';
+import { SubscriptionService } from '../services/subscription.service';
+import * as _ from 'lodash';
+import { PubsubService } from '../services/pubsub.service';
 
 @Service()
 export class ScheduleGenerateMenuFunctionCreator extends FunctionCreator {
   constructor(
-    private messagesService: PubsubService,
-    private readonly configurationService: ConfigurationService,
+    private readonly subscriptionService: SubscriptionService,
+    private readonly pubsubService: PubsubService,
   ) {
     super();
   }
 
   createFunction(): CloudFunction<unknown> {
-    return region(this.configurationService.functionRegion)
-      .pubsub.schedule('every friday 12:00')
+    return pubsub
+      .schedule('every friday 12:00')
       .timeZone('Europe/Moscow')
-      .onRun(async () => await this.messagesService.publish('generate-menu'));
+      .onRun(async () => {
+        const subscriptions = await this.subscriptionService.getAll();
+
+        const chunks = _.chunk(subscriptions, 100);
+
+        await Promise.all(
+          chunks.map(async (subscriptions) => {
+            const subscriptionIds = subscriptions.map(({ id }) => id);
+
+            await this.pubsubService.publish('generate-menu', { subscriptionIds });
+          }),
+        );
+      });
   }
 }

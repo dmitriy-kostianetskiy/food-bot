@@ -1,18 +1,18 @@
-import * as admin from 'firebase-admin';
-
-import { RecipeModel } from '../model';
 import { Service } from 'typedi';
+import { RecipeRepository } from '../repositories/recipe.repository';
+import { RecipeModel } from '../model';
 
 @Service()
-export default class RecipeService {
-  constructor(private readonly firestore: admin.firestore.Firestore) {}
+export class RecipeService {
+  private cache?: readonly RecipeModel[];
 
-  async fetchAll(): Promise<readonly RecipeModel[]> {
-    const result = await this.firestore.collection('recipes').get();
+  constructor(private readonly recipeRepository: RecipeRepository) {}
 
-    return result.docs.map((item) => ({
-      id: item.id,
-      ...(item.data() as RecipeModel),
-    }));
+  async getAll(): Promise<readonly RecipeModel[]> {
+    if (!this.cache) {
+      this.cache = await this.recipeRepository.fetchAll();
+    }
+
+    return this.cache;
   }
 }

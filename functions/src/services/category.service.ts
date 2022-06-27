@@ -1,18 +1,18 @@
-import * as admin from 'firebase-admin';
-
 import { CategoryModel } from '../model/category-model';
 import { Service } from 'typedi';
+import { CategoryRepository } from '../repositories/category.repository';
 
 @Service()
 export class CategoryService {
-  constructor(private firestore: admin.firestore.Firestore) {}
+  private cache?: readonly CategoryModel[];
 
-  async fetchAll(): Promise<readonly CategoryModel[]> {
-    const result = await this.firestore.collection('categories').get();
+  constructor(private readonly categoryRepository: CategoryRepository) {}
 
-    return result.docs.map((item) => ({
-      id: item.id,
-      ...(item.data() as CategoryModel),
-    }));
+  async getAll(): Promise<readonly CategoryModel[]> {
+    if (!this.cache) {
+      this.cache = await this.categoryRepository.fetchAll();
+    }
+
+    return this.cache;
   }
 }

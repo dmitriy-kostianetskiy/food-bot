@@ -9,6 +9,7 @@
     "firestore-export-import": "^1.1.0",
     "lodash": "^4.17.15",
     "reflect-metadata": "^0.1.13",
+    "sinon": "^14.0.0",
     "telegraf": "^4.8.5",
     "ts-node": "^10.8.1",
     "typedi": "^0.10.0"
@@ -21,6 +22,7 @@
     "@types/jest": "^28.1.2",
     "@types/lodash": "^4.14.151",
     "@types/node": "16.11.7",
+    "@types/sinon": "^10.0.11",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
     "eslint": "^8.18.0",

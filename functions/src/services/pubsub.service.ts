@@ -1,21 +1,12 @@
 import { PubSub } from '@google-cloud/pubsub';
 import { Service } from 'typedi';
-
-export type Topic = 'bot-messages' | 'generate-menu';
-
-export interface BotMessage {
-  readonly subscriberId: string;
-  readonly messages: readonly string[];
-}
+import { Topic, TopicMessage } from '../model/pubsub';
 
 @Service()
 export class PubsubService {
   constructor(private readonly pubsub: PubSub) {}
 
-  async publish(topic: 'generate-menu'): Promise<void>;
-  async publish(topic: 'bot-messages', message: BotMessage): Promise<void>;
-  async publish(topic: Topic, message?: object): Promise<void> {
-    await this.pubsub.topic(topic).publishJSON(message || {});
+  async publish<T extends Topic>(topic: T, message: TopicMessage<T>): Promise<void> {
+    await this.pubsub.topic(topic).publishMessage({ json: message });
   }
 }
-8;

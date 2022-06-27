@@ -1,28 +1,33 @@
-import { CloudFunction, region } from 'firebase-functions';
+import { CloudFunction, pubsub } from 'firebase-functions';
 
 import { FunctionCreator } from './function-creator';
-import { MenuGeneratorService } from '../services/menu-generator.service';
-import { MenuService } from '../services/menu.service';
 import { Service } from 'typedi';
-import { ConfigurationService } from '../services/configuration.service';
+import { CommunicationService } from '../services/communication.service';
+import { SubscriptionService } from '../services/subscription.service';
+import { topicFunction } from '../utils';
 
 @Service()
 export class GenerateMenuFunctionCreator extends FunctionCreator {
   constructor(
-    private readonly menuGenerator: MenuGeneratorService,
-    private readonly menuService: MenuService,
-    private readonly configurationService: ConfigurationService,
+    private readonly subscriptionService: SubscriptionService,
+    private readonly communicationService: CommunicationService,
   ) {
     super();
   }
 
-  createFunction(): CloudFunction<unknown> {
-    return region(this.configurationService.functionRegion)
-      .pubsub.topic('generate-menu')
-      .onPublish(async () => {
-        const menu = await this.menuGenerator.generate();
+  createFunction(): CloudFunction<pubsub.Message> {
+    return topicFunction('generate-menu', async (message) => {
+      await Promise.all(message.subscriptionIds.map(async (id) => this.handleSubscription(id)));
+    });
+  }
 
-        await this.menuService.replaceCurrentMenu(menu);
-      });
+  private async handleSubscription(id: string): Promise<void> {
+    try {
+      const subscription = await this.subscriptionService.createNewOrUpdateExisting(id);
+      await this.communicationService.sendMessageToChat(id, ...subscription.printed);
+    } catch (error) {
+      await this.communicationService.sendErrorMessage(id);
+      throw error;
+    }
   }
 }

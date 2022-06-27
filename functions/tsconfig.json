@@ -13,9 +13,9 @@
     "types": [
       "node",
       "jest"
-    ]
+    ],
+    "strict": true
   },
-  "strictNullChecks": true,
   "include": [
     "src"
   ]
