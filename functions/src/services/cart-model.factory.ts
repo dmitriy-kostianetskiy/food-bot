@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import {
-  CategoryModel,
   MenuModel,
   CartModel,
   RecipeModel,
@@ -10,15 +9,15 @@ import {
   CartCategory,
 } from '../model';
 import { Service } from 'typedi';
-import { TranslationService } from './translation.service';
 import { IngredientMapper } from './ingredient-mapper';
+import { IngredientMapperFactory } from './ingredient-mapper.factory';
 
 @Service()
 export class CartModelFactory {
-  constructor(private readonly translationService: TranslationService) {}
+  constructor(private readonly ingredientMapperFactory: IngredientMapperFactory) {}
 
-  create(menu: MenuModel, categories: readonly CategoryModel[]): CartModel {
-    const mapper = new IngredientMapper(categories, this.translationService.get('otherCategory'));
+  async create(menu: MenuModel): Promise<CartModel> {
+    const mapper = await this.ingredientMapperFactory.create();
 
     return {
       categories: this.buildCartCategories(menu.dinners, mapper),
