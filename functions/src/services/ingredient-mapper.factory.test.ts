@@ -20,5 +20,5 @@ test('should publish message to pubsub', async () => {
   await factory.create();
 
   // Assert
-  assert.calledOnceWithExactly(translationService.get, 'otherCategory');
+  assert.calledOnceWithExactly(translationService.get, 'otherCategory1');
 });
