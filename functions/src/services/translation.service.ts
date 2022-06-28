@@ -1,10 +1,10 @@
 import { Service } from 'typedi';
-import { Languages, TranslationDictionary, TranslationKey } from '../model';
+import { Language, TranslationDictionary, TranslationKey } from '../model';
 import { TRANSLATION_DICTIONARIES } from '../translations/all';
 
 @Service()
 export class TranslationService {
-  private currentLanguage: Languages = 'en';
+  private currentLanguage: Language = 'en';
   private get currentDictionary(): TranslationDictionary {
     return TRANSLATION_DICTIONARIES[this.currentLanguage];
   }
@@ -13,7 +13,16 @@ export class TranslationService {
     return this.currentDictionary[key];
   }
 
-  setLanguage(language: Languages): void {
+  setLanguage(language: Language): void {
     this.currentLanguage = language;
+  }
+
+  findLanguageByCode(languageCode: string | undefined): Language {
+    const lang = languageCode as Language;
+    if (TRANSLATION_DICTIONARIES[lang]) {
+      return lang;
+    }
+
+    return 'en';
   }
 }

@@ -7,4 +7,5 @@ export type TranslationKey =
   | 'ingredients'
   | 'steps'
   | 'cart'
-  | 'otherCategory';
+  | 'otherCategory'
+  | 'useStartCommandToStart';

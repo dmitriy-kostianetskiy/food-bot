@@ -7,3 +7,4 @@ export * from './configuration';
 export * from './pubsub';
 export * from './translations';
 export * from './cart';
+export * from './custom-context';
