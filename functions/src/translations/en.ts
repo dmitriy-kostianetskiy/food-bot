@@ -10,4 +10,5 @@ export const TRANSLATION_DICTIONARY_EN: TranslationDictionary = {
   steps: 'Steps',
   cart: 'Cart',
   otherCategory: 'Other',
+  useStartCommandToStart: 'Please use /start to subscribe and /stop to unsubscribe.',
 };

@@ -11,4 +11,6 @@ export const TRANSLATION_DICTIONARY_RU: TranslationDictionary = {
   steps: 'Рецепт',
   cart: 'Список покупок',
   otherCategory: 'Другое',
+  useStartCommandToStart:
+    'Используйте команды /start и /stop, чтобы подписаться и отписаться от рассылки.',
 };

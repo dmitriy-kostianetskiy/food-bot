@@ -5,12 +5,14 @@ import { Service } from 'typedi';
 import { CommunicationService } from '../services/communication.service';
 import { SubscriptionService } from '../services/subscription.service';
 import { topicFunction } from '../utils';
+import { TranslationService } from '../services/translation.service';
 
 @Service()
 export class GenerateMenuFunctionCreator extends FunctionCreator {
   constructor(
     private readonly subscriptionService: SubscriptionService,
     private readonly communicationService: CommunicationService,
+    private readonly translationService: TranslationService,
   ) {
     super();
   }
@@ -23,7 +25,13 @@ export class GenerateMenuFunctionCreator extends FunctionCreator {
 
   private async handleSubscription(id: string): Promise<void> {
     try {
-      const subscription = await this.subscriptionService.createNewOrUpdateExisting(id);
+      const subscription = await this.subscriptionService.update(id);
+      if (!subscription) {
+        return;
+      }
+
+      this.translationService.setLanguage(subscription.language);
+
       await this.communicationService.sendMessageToChat(id, ...subscription.printed);
     } catch (error) {
       await this.communicationService.sendErrorMessage(id);

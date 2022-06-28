@@ -4,11 +4,13 @@ import { FunctionCreator } from './function-creator';
 import { Service } from 'typedi';
 import { TelegramService } from '../services/telegram.service';
 import { PubsubService } from '../services/pubsub.service';
+import { TranslationService } from '../services/translation.service';
 
 @Service()
 export class TelegramBotHookFunctionCreator extends FunctionCreator {
   constructor(
     private readonly telegramService: TelegramService,
+    private readonly translationService: TranslationService,
     private readonly pubsubService: PubsubService,
   ) {
     super();
@@ -29,9 +31,16 @@ export class TelegramBotHookFunctionCreator extends FunctionCreator {
   }
 
   private configureCommands() {
+    this.telegramService.telegraf.use((context) => {
+      context.language = this.translationService.findLanguageByCode(
+        context.message?.from.language_code,
+      );
+    });
+
     this.telegramService.telegraf.start(async (context) => {
       this.pubsubService.publish('create-subscription', {
         id: context.chat.id.toFixed(0),
+        language: context.language || 'en',
       });
     });
 
@@ -45,10 +54,10 @@ export class TelegramBotHookFunctionCreator extends FunctionCreator {
       console.log(`Ooops, encountered an error for ${context.updateType}`, error);
     });
 
-    this.telegramService.telegraf.on('text', (context) =>
-      context.reply(
-        'Используйте команды /start и /stop, чтобы подписаться и отписаться от рассылки.',
-      ),
-    );
+    this.telegramService.telegraf.on('text', (context) => {
+      const text = this.translationService.get('useStartCommandToStart');
+
+      context.reply(text);
+    });
   }
 }
