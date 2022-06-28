@@ -47,7 +47,8 @@
     "deploy": "yarn build && yarn firebase deploy --only functions",
     "config": "yarn firebase functions:config:set bot.token=\"BOT_TOKEN\"",
     "logs": "yarn firebase functions:log",
-    "test": "yarn jest"
+    "test": "yarn jest",
+    "test:ci": "yarn jest --config=jest.config.ci.js"
   },
   "engines": {
     "node": "16"
