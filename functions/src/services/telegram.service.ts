@@ -1,28 +1,59 @@
-import { Inject, Service } from 'typedi';
-import { Telegraf, Telegram } from 'telegraf';
+import { Service } from 'typedi';
+import { Telegraf } from 'telegraf';
 import { Update } from 'typegram';
 import { ServerResponse } from 'http';
-import { Configuration, CustomContext } from '../model';
-import { CONFIG_TOKEN } from '../tokens';
+import {
+  TelegramCommand,
+  TelegramCustomContext,
+  TelegramErrorMiddleware,
+  TelegramMiddleware,
+  TelegramText,
+} from '../model';
 
 @Service()
 export class TelegramService {
-  @Inject(CONFIG_TOKEN)
-  private readonly configuration!: Configuration;
+  private _telegraf?: Telegraf<TelegramCustomContext>;
 
-  readonly telegraf: Telegraf<CustomContext> = this.createTelegraf();
+  private get telegraf(): Telegraf<TelegramCustomContext> {
+    if (!this._telegraf) {
+      this._telegraf = this.createTelegraf();
+    }
 
-  get telegram(): Telegram {
-    return this.telegraf.telegram;
+    return this._telegraf;
   }
 
-  private createTelegraf(): Telegraf<CustomContext> {
-    const token = this.configuration.bot?.token;
+  private createTelegraf(): Telegraf<TelegramCustomContext> {
+    const token = process.env.TELEGRAM_BOT_TOKEN;
+
     if (!token) {
       throw Error('Unable to run bot because bot token is empty');
     }
 
     return new Telegraf(token);
+  }
+
+  command(...commands: TelegramCommand[]): void {
+    console.log(`Register Commands ${commands.length}`);
+
+    commands.forEach((command) => {
+      console.log(`Register Command ${command.command}`);
+
+      this.telegraf.command(command.command, async (context) => await command.handler(context));
+
+      console.log(`Command ${command.command} registered`);
+    });
+  }
+
+  use(middleware: TelegramMiddleware): void {
+    this.telegraf.use(async (context, next) => await middleware(context, next));
+  }
+
+  catch(middleware: TelegramErrorMiddleware): void {
+    this.telegraf.catch(async (error, context) => await middleware(error, context));
+  }
+
+  text(middleware: TelegramText): void {
+    this.telegraf.on('text', async (context) => await middleware(context));
   }
 
   // configure(): void {
@@ -37,7 +68,7 @@ export class TelegramService {
   // }
 
   async sendHtml(chatId: string, html: string): Promise<void> {
-    await this.telegram.sendMessage(chatId, html, { parse_mode: 'HTML' });
+    await this.telegraf.telegram.sendMessage(chatId, html, { parse_mode: 'HTML' });
   }
 
   async handleRequest(body: Update, response: ServerResponse): Promise<void> {

@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "generate-menu"
-  }
+    "prod": "generate-menu",
+    "dev": "generate-menu-dev"
+  },
+  "targets": {}
 }

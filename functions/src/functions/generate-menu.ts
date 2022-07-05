@@ -6,6 +6,8 @@ import { CommunicationService } from '../services/communication.service';
 import { SubscriptionService } from '../services/subscription.service';
 import { topicFunction } from '../utils';
 import { TranslationService } from '../services/translation.service';
+import { Language } from '../model';
+import { SubscriptionPrinterService } from '../services/subscription-printer.factory';
 
 @Service()
 export class GenerateMenuFunctionCreator extends FunctionCreator {
@@ -13,29 +15,27 @@ export class GenerateMenuFunctionCreator extends FunctionCreator {
     private readonly subscriptionService: SubscriptionService,
     private readonly communicationService: CommunicationService,
     private readonly translationService: TranslationService,
+    private readonly subscriptionPrinterService: SubscriptionPrinterService,
   ) {
     super();
   }
 
   createFunction(): CloudFunction<pubsub.Message> {
     return topicFunction('generate-menu', async (message) => {
-      await Promise.all(message.subscriptionIds.map(async (id) => this.handleSubscription(id)));
+      await this.handleMessage(message.chatId, message.language);
     });
   }
 
-  private async handleSubscription(id: string): Promise<void> {
+  private async handleMessage(id: string, language: Language): Promise<void> {
     try {
-      const subscription = await this.subscriptionService.update(id);
-      if (!subscription) {
-        return;
-      }
+      this.translationService.setLanguage(language);
 
-      this.translationService.setLanguage(subscription.language);
+      const subscription = await this.subscriptionService.create(id, language);
+      const printed = this.subscriptionPrinterService.print(subscription);
 
-      await this.communicationService.sendMessageToChat(id, ...subscription.printed);
+      this.communicationService.sendMessageToChat(id, ...printed);
     } catch (error) {
-      await this.communicationService.sendErrorMessage(id);
-      throw error;
+      console.error(`Unable to generate menu for subscriber with id: ${id}`, error);
     }
   }
 }

@@ -4,7 +4,7 @@ import { createStubInstance, stub, assert } from 'sinon';
 import { TranslationKey } from '../model';
 import { CategoryService } from './category.service';
 
-test('should publish message to pubsub', async () => {
+test('should call other category', async () => {
   // Arrange
   const categoriesService = createStubInstance(CategoryService, {
     getAll: Promise.resolve([]),
@@ -20,5 +20,5 @@ test('should publish message to pubsub', async () => {
   await factory.create();
 
   // Assert
-  assert.calledOnceWithExactly(translationService.get, 'otherCategory1');
+  assert.calledOnceWithExactly(translationService.get, 'otherCategory');
 });

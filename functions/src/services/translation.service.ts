@@ -9,8 +9,10 @@ export class TranslationService {
     return TRANSLATION_DICTIONARIES[this.currentLanguage];
   }
 
-  get(key: TranslationKey): string {
-    return this.currentDictionary[key];
+  get(key: TranslationKey, language?: Language): string {
+    const currentDictionary = this.findDictionary(language);
+
+    return currentDictionary[key];
   }
 
   setLanguage(language: Language): void {
@@ -24,5 +26,13 @@ export class TranslationService {
     }
 
     return 'en';
+  }
+
+  private findDictionary(language?: Language): TranslationDictionary {
+    if (!language) {
+      return this.currentDictionary;
+    }
+
+    return TRANSLATION_DICTIONARIES[language] || this.currentDictionary;
   }
 }

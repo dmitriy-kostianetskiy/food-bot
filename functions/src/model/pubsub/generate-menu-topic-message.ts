@@ -1,3 +1,6 @@
+import { Language } from '../translations';
+
 export interface GenerateMenuTopicMessage {
-  readonly subscriptionIds: readonly string[];
+  readonly chatId: string;
+  readonly language: Language;
 }

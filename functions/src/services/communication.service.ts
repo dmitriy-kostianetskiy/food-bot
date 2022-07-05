@@ -1,12 +1,10 @@
 import { Service } from 'typedi';
-import { PubsubService } from './pubsub.service';
 import { TelegramService } from './telegram.service';
 import { TranslationService } from './translation.service';
 
 @Service()
 export class CommunicationService {
   constructor(
-    private readonly pubsubService: PubsubService,
     private readonly telegramService: TelegramService,
     private readonly translationService: TranslationService,
   ) {}
@@ -16,27 +14,20 @@ export class CommunicationService {
       return;
     }
 
-    if (messages.length === 1) {
-      const [message] = messages;
-
-      return await this.telegramService.sendHtml(chatId, message);
+    for (const item of messages) {
+      await this.telegramService.sendHtml(chatId, item);
     }
-
-    await this.pubsubService.publish('telegram-bot-messages', {
-      chatId,
-      messages,
-    });
   }
 
   async sendErrorMessage(chatId: string): Promise<void> {
-    await this.sendMessageToChat(chatId, this.translationService.get('error'));
+    await this.telegramService.sendHtml(chatId, this.translationService.get('error'));
   }
 
   async sendThankYouMessage(chatId: string): Promise<void> {
-    await this.sendMessageToChat(chatId, this.translationService.get('thankYou'));
+    await this.telegramService.sendHtml(chatId, this.translationService.get('thankYou'));
   }
 
   async sendGoodByeMessage(chatId: string): Promise<void> {
-    await this.sendMessageToChat(chatId, this.translationService.get('goodBye'));
+    await this.telegramService.sendHtml(chatId, this.translationService.get('goodBye'));
   }
 }
