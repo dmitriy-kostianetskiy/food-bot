@@ -1,4 +1,4 @@
 import { Token } from 'typedi';
-import { Configuration } from './model/configuration';
+import { TelegramCommand } from './model/telegram/command';
 
-export const CONFIG_TOKEN = new Token<Configuration>('CONFIG_TOKEN');
+export const COMMANDS_TOKEN = new Token<TelegramCommand>('TELEGRAM_COMMANDS');

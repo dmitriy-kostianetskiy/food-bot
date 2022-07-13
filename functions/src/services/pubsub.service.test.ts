@@ -12,7 +12,7 @@ test('should publish message to pubsub', async () => {
   const pubsubService = new PubsubService(pubSub);
 
   // Act
-  await pubsubService.publish('generate-menu', { subscriptionIds: ['1', '2', '3'] });
+  await pubsubService.publish('generate-menu', { chatId: '1', language: 'en' });
 
   // Assert
   assert.calledOnceWithExactly(pubSub.topic, 'generate-menu');
